@@ -35,9 +35,10 @@ Elke push naar `main` bouwt en deployt automatisch via `.github/workflows/deploy
 Eenmalig instellen in de repo:
 
 1. **Settings → Pages → Source**: kies **GitHub Actions**.
-2. **Settings → Secrets and variables → Actions → New repository secret**:
-   `VITE_SUPABASE_URL` en `VITE_SUPABASE_ANON_KEY`.
-3. **Actions → Deploy naar GitHub Pages → Run workflow** (of push iets naar `main`).
+2. **Actions → Deploy naar GitHub Pages → Run workflow** (of push iets naar `main`).
+
+De Supabase-URL en publishable key staan in `.env.production`. Die zijn publiek
+(ze zitten toch in de gebouwde JavaScript), dus geen GitHub-secrets nodig.
 
 Lokaal draait de app op `http://localhost:5173/berlijnbierweekend/` (zelfde pad als op Pages).
 
