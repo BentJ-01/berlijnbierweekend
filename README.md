@@ -27,13 +27,19 @@ Vite + React + TypeScript, Tailwind CSS, `vite-plugin-pwa`, Supabase (Postgres +
    ```
    Op je telefoon testen in hetzelfde wifi-netwerk: `npm run dev -- --host`.
 
-## Deployen
+## Deployen (GitHub Pages)
 
-Statische hosting met HTTPS, bv. **Netlify** (er staat een `netlify.toml` klaar) of Vercel:
+De app draait op **https://bentj-01.github.io/berlijnbierweekend/**.
+Elke push naar `main` bouwt en deployt automatisch via `.github/workflows/deploy.yml`.
 
-- Build command: `npm run build`
-- Publish directory: `dist`
-- Zet `VITE_SUPABASE_URL` en `VITE_SUPABASE_ANON_KEY` als environment variables bij de host.
+Eenmalig instellen in de repo:
+
+1. **Settings → Pages → Source**: kies **GitHub Actions**.
+2. **Settings → Secrets and variables → Actions → New repository secret**:
+   `VITE_SUPABASE_URL` en `VITE_SUPABASE_ANON_KEY`.
+3. **Actions → Deploy naar GitHub Pages → Run workflow** (of push iets naar `main`).
+
+Lokaal draait de app op `http://localhost:5173/berlijnbierweekend/` (zelfde pad als op Pages).
 
 Daarna op de telefoon openen en installeren:
 - **Android (Chrome)**: menu → "App installeren".
