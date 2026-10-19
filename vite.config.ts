@@ -2,7 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// GitHub Pages serveert de app op https://bentj-01.github.io/berlijnbierweekend/
 export default defineConfig({
+  base: '/berlijnbierweekend/',
   plugins: [
     react(),
     VitePWA({
@@ -15,7 +17,6 @@ export default defineConfig({
         lang: 'nl-BE',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
         theme_color: '#0b0b0c',
         background_color: '#0b0b0c',
         icons: [
@@ -27,7 +28,6 @@ export default defineConfig({
       // Enkel de app shell cachen; data komt altijd live van Supabase.
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png}'],
-        navigateFallback: '/index.html',
       },
     }),
   ],
