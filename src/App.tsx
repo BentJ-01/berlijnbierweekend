@@ -13,6 +13,8 @@ import { Planning } from './screens/Planning'
 import { Pubgolf } from './screens/Pubgolf'
 
 const PLAYER_KEY = 'currentPlayerId'
+const SLAAPPLEK = 'Stresemannstraße 66, 10963 Berlin, Deutschland'
+const SLAAPPLEK_ROUTE = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(SLAAPPLEK)}`
 const scoreKeyOf = (s: Score) => `${s.hole_id}:${s.player_id}`
 
 export default function App() {
@@ -77,12 +79,22 @@ function Main() {
         <span className="text-lg font-black">
           Berlijn <span aria-hidden>🍺</span>
         </span>
-        <button
-          className="min-h-11 rounded-full border border-line px-3 text-sm text-zinc-300 active:bg-line"
-          onClick={() => pick(null)}
-        >
-          {current.name} ⇄
-        </button>
+        <div className="flex gap-2">
+          <a
+            href={SLAAPPLEK_ROUTE}
+            target="_blank"
+            rel="noreferrer"
+            className="flex min-h-11 items-center rounded-full bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
+          >
+            🏠 Naar huis
+          </a>
+          <button
+            className="min-h-11 rounded-full border border-line px-3 text-sm text-zinc-300 active:bg-line"
+            onClick={() => pick(null)}
+          >
+            {current.name} ⇄
+          </button>
+        </div>
       </header>
 
       <IosBanner />

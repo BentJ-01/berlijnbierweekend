@@ -56,7 +56,7 @@ insert into plan_items (day, time, title, location, note, status) values
   -- Vrijdag 13 nov: aankomst, Muur-gedenkplaats, Alex, pubgolf
   ('2026-11-13', '09:40', 'Vlucht SN 2581 Brussel naar Berlijn', 'Brussels Airport', 'Aankomst 11:05', 'vast'),
   ('2026-11-13', '11:30', 'Trein naar het centrum', 'Berlin Brandenburg Airport', 'FEX of S-Bahn, ±35 min. Ticket zone ABC nodig (of Welcome Card 48u/72u ABC).', 'vast'),
-  ('2026-11-13', '12:30', 'Inchecken / bagage droppen', null, null, 'vast'),
+  ('2026-11-13', '12:30', 'Inchecken / bagage droppen', 'Stresemannstraße 66, 10963 Berlin', 'Onze slaapplek (Kreuzberg). Knop "Naar huis" bovenaan opent de route.', 'vast'),
   ('2026-11-13', '13:30', 'Lunch: currywurst bij Konnopke''s', 'Konnopke''s Imbiss, Schönhauser Allee 44B', 'Klassieker sinds 1930, onder de metro.', 'vast'),
   ('2026-11-13', '14:30', 'Gedenkstätte Berliner Mauer', 'Bernauer Straße 111', 'Bewaard stuk Muur + uitkijktoren. Reken 1 à 2u, voor het donker wordt (±16:30).', 'vast'),
   ('2026-11-13', '16:30', 'Hackesche Höfe', 'Rosenthaler Straße 40', 'Binnenkoertjes met winkeltjes en café''s.', 'vast'),
