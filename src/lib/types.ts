@@ -8,6 +8,7 @@ export type Hole = {
   kind: HoleKind
   bar_name: string
   description: string
+  location: string | null
   par: number
   rule: string
   created_at: string
