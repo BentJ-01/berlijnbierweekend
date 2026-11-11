@@ -4,17 +4,17 @@ import { IosBanner } from './components/IosBanner'
 import { useToast } from './components/Toast'
 import { WhoAreYou } from './components/WhoAreYou'
 import { readString, writeString } from './lib/storage'
+import { mapsRouteUrl } from './lib/maps'
 import { isConfigured } from './lib/supabase'
-import type { Hole, PlanItem, Player, Score } from './lib/types'
-import { useDrinks } from './lib/useDrinks'
+import type { Expense, Hole, PlanItem, Player, Score, Ticket } from './lib/types'
 import { useRealtimeTable } from './lib/useRealtimeTable'
-import { Pinten } from './screens/Pinten'
+import { Kosten } from './screens/Kosten'
 import { Planning } from './screens/Planning'
 import { Pubgolf } from './screens/Pubgolf'
 
 const PLAYER_KEY = 'currentPlayerId'
 const SLAAPPLEK = 'Stresemannstraße 66, 10963 Berlin, Deutschland'
-const SLAAPPLEK_ROUTE = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(SLAAPPLEK)}`
+const SLAAPPLEK_ROUTE = mapsRouteUrl(SLAAPPLEK)
 const scoreKeyOf = (s: Score) => `${s.hole_id}:${s.player_id}`
 
 export default function App() {
@@ -32,15 +32,16 @@ export default function App() {
 }
 
 function Main() {
-  const [tab, setTab] = useState<Tab>('pinten')
+  const [tab, setTab] = useState<Tab>('planning')
   const [me, setMe] = useState<string | null>(() => readString(PLAYER_KEY))
   const toast = useToast()
 
   const playersTable = useRealtimeTable<Player>('players')
-  const drinks = useDrinks()
   const holes = useRealtimeTable<Hole>('golf_holes')
   const scores = useRealtimeTable<Score>('golf_scores', scoreKeyOf)
   const plan = useRealtimeTable<PlanItem>('plan_items')
+  const tickets = useRealtimeTable<Ticket>('tickets')
+  const expenses = useRealtimeTable<Expense>('expenses')
 
   const players = [...playersTable.rows].sort((a, b) => a.sort_order - b.sort_order)
   const current = players.find((p) => p.id === me)
@@ -99,19 +100,11 @@ function Main() {
 
       <IosBanner />
 
-      {tab === 'pinten' && (
-        <Pinten
-          players={players}
-          me={current.id}
-          drinks={drinks.drinks}
-          queued={drinks.queued}
-          add={drinks.add}
-          remove={drinks.remove}
-          toast={toast.show}
-        />
+      {tab === 'planning' && (
+        <Planning items={plan} tickets={tickets.rows} players={players} me={current.id} toast={toast.show} />
       )}
       {tab === 'pubgolf' && <Pubgolf players={players} me={current.id} holes={holes} scores={scores} toast={toast.show} />}
-      {tab === 'planning' && <Planning items={plan} toast={toast.show} />}
+      {tab === 'kosten' && <Kosten players={players} me={current.id} expenses={expenses} toast={toast.show} />}
 
       {toast.node}
       <BottomNav tab={tab} onChange={setTab} />

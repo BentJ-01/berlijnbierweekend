@@ -10,18 +10,12 @@ create table players (
 insert into players (name, sort_order) values
   ('Benjamin', 1), ('Bent', 2), ('Senne', 3), ('Aaron', 4), ('Lander', 5);
 
-create table drinks (
-  id uuid primary key default gen_random_uuid(),
-  player_id uuid not null references players(id) on delete cascade,
-  kind text not null default 'pint',
-  created_at timestamptz not null default now()
-);
-create index drinks_player_idx on drinks(player_id);
-
 create table golf_holes (
   id uuid primary key default gen_random_uuid(),
   position int not null,
+  kind text not null default 'cafe' check (kind in ('cafe', 'cultuur')),
   bar_name text not null default '',
+  description text not null default '',
   par int not null default 3,
   rule text not null default '',
   created_at timestamptz not null default now()
@@ -41,53 +35,146 @@ create table golf_scores (
 create table plan_items (
   id uuid primary key default gen_random_uuid(),
   day date not null,
+  part text not null default 'Namiddag',
+  position int not null default 0,
   time time,
   title text not null,
   location text,
   note text,
+  details text,
+  url text,
   status text not null default 'vast' check (status in ('vast', 'optioneel')),
   done boolean not null default false,
   created_at timestamptz not null default now()
 );
 
--- Planning: elke dag één buurt, niks zots voor 11u.
--- Vr = Mitte-Oost/Noord, Za = West (winkels zijn zondag dicht) + uitgaan, Zo = Mitte + Muur.
-insert into plan_items (day, time, title, location, note, status) values
-  -- Vrijdag 13 nov: aankomst, Muur-gedenkplaats, Alex, pubgolf
-  ('2026-11-13', '09:40', 'Vlucht SN 2581 Brussel naar Berlijn', 'Brussels Airport', 'Aankomst 11:05', 'vast'),
-  ('2026-11-13', '11:30', 'Trein naar het centrum', 'Berlin Brandenburg Airport', 'FEX of S-Bahn, ±35 min. Ticket zone ABC nodig (of Welcome Card 48u/72u ABC).', 'vast'),
-  ('2026-11-13', '12:30', 'Inchecken / bagage droppen', 'Stresemannstraße 66, 10963 Berlin', 'Onze slaapplek (Kreuzberg). Knop "Naar huis" bovenaan opent de route.', 'vast'),
-  ('2026-11-13', '13:30', 'Lunch: currywurst bij Konnopke''s', 'Konnopke''s Imbiss, Schönhauser Allee 44B', 'Klassieker sinds 1930, onder de metro.', 'vast'),
-  ('2026-11-13', '14:30', 'Gedenkstätte Berliner Mauer', 'Bernauer Straße 111', 'Bewaard stuk Muur + uitkijktoren. Reken 1 à 2u, voor het donker wordt (±16:30).', 'vast'),
-  ('2026-11-13', '16:30', 'Hackesche Höfe', 'Rosenthaler Straße 40', 'Binnenkoertjes met winkeltjes en café''s.', 'vast'),
-  ('2026-11-13', '17:30', 'Fernsehturm', 'Panoramastraße 1A', 'Berlijn by night vanop 203 m. Tickets met tijdslot vooraf boeken!', 'vast'),
-  ('2026-11-13', '19:30', 'Avondeten rond Hackescher Markt', 'Hackescher Markt', null, 'vast'),
-  ('2026-11-13', '21:00', 'Pubgolf ⛳🍺', 'Mitte', 'Holes invullen in de Pubgolf-tab.', 'vast'),
-  -- Zaterdag 14 nov: West-Berlijn, daarna uitgaan
-  ('2026-11-14', '11:00', 'Schloss Charlottenburg', 'Spandauer Damm 10', 'Paleis + tuin (tuin is gratis).', 'vast'),
-  ('2026-11-14', '12:15', 'Bröhan-Museum of Sammlung Scharf-Gerstenberg', 'Schloßstraße 1a', 'Recht tegenover het paleis. Art nouveau of surrealisme, voor wie zin heeft.', 'optioneel'),
-  ('2026-11-14', '13:30', 'Lunch op de Kurfürstendamm', 'Kurfürstendamm', null, 'vast'),
-  ('2026-11-14', '14:30', 'Kaiser-Wilhelm-Gedächtniskirche', 'Breitscheidplatz', 'Kapotgebombde kerktoren, bewust zo gelaten.', 'vast'),
-  ('2026-11-14', '15:00', 'Bikini Berlin', 'Budapester Straße 38', 'Conceptmall, dakterras met zicht op de apen van de Zoo.', 'optioneel'),
-  ('2026-11-14', '15:45', 'KaDeWe', 'Tauentzienstraße 21', 'Grootste warenhuis van Europa. 6e verdieping = food hall, pintje pakken. Zondag dicht!', 'vast'),
-  ('2026-11-14', '17:30', 'Terug naar hotel, even platliggen', null, 'Krachten sparen voor vanavond.', 'optioneel'),
-  ('2026-11-14', '20:00', 'Avondeten in Friedrichshain', 'Simon-Dach-Straße', null, 'vast'),
-  ('2026-11-14', '23:00', 'Uitgaan 🎉', 'RAW-Gelände, Revaler Straße 99', 'Bars en clubs op één terrein. Berghain voor wie durft (Am Wriezener Bahnhof).', 'vast'),
-  -- Zondag 15 nov: Mitte en de Muur (rustig starten)
-  ('2026-11-15', '11:00', 'Reichstag: koepel', 'Platz der Republik 1', 'Gratis, maar VOORAF registreren op bundestag.de! ID meenemen.', 'vast'),
-  ('2026-11-15', '12:00', 'Brandenburger Tor', 'Pariser Platz', null, 'vast'),
-  ('2026-11-15', '12:20', 'Holocaust-Mahnmal', 'Cora-Berliner-Straße 1', '5 min stappen vanaf de Brandenburger Tor.', 'vast'),
-  ('2026-11-15', '13:00', 'Lunch: döner', 'Friedrichstraße', null, 'vast'),
-  ('2026-11-15', '14:00', 'Checkpoint Charlie', 'Friedrichstraße 43', 'Oude grensovergang Oost/West.', 'vast'),
-  ('2026-11-15', '14:45', 'Unter den Linden en Bebelplatz', 'Bebelplatz', 'Via de Gendarmenmarkt. Op Bebelplatz: monument boekverbranding 1933.', 'vast'),
-  ('2026-11-15', '15:15', 'Museumsinsel en Berliner Dom', 'Am Lustgarten', 'Pergamonmuseum is dicht voor renovatie.', 'vast'),
-  ('2026-11-15', '15:45', 'Humboldt Forum', 'Schloßplatz', 'Veel gratis te bezoeken, dakterras met uitzicht.', 'optioneel'),
-  ('2026-11-15', '17:00', 'East Side Gallery', 'Mühlenstraße', 'Langste stuk Muur (1,3 km schilderingen). S-Bahn naar Warschauer Straße.', 'vast'),
-  ('2026-11-15', '19:30', 'Avondeten in Kreuzberg', 'Schlesisches Tor', 'Over de Oberbaumbrücke stappen.', 'vast'),
-  ('2026-11-15', '21:30', 'Rustige pint of toch nog uitgaan', 'Kreuzberg', 'Zien hoe we ons voelen.', 'optioneel'),
-  -- Maandag 16 nov: naar huis
-  ('2026-11-16', '09:15', 'Uitchecken en trein naar BER', 'Berlin Brandenburg Airport', 'FEX of S-Bahn, ±35 min. Rond 10:00 op de luchthaven.', 'vast'),
-  ('2026-11-16', '11:55', 'Vlucht SN 2582 Berlijn naar Brussel', 'Berlin Brandenburg Airport', 'Aankomst 13:20', 'vast');
+-- Tickets bij een planningsitem (player_id null = groepsticket).
+-- De ticketcodes zelf staan NIET in deze (publieke) repo: die zitten enkel in de database.
+create table tickets (
+  id uuid primary key default gen_random_uuid(),
+  plan_item_id uuid not null references plan_items(id) on delete cascade,
+  player_id uuid references players(id) on delete cascade,
+  label text not null,
+  code text not null,
+  info text
+);
+
+-- Kosten (Tricount): gelijk verdeeld over split_between
+create table expenses (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  amount_cents int not null check (amount_cents > 0),
+  paid_by uuid not null references players(id) on delete cascade,
+  split_between uuid[] not null,
+  created_at timestamptz not null default now()
+);
+
+-- Planning: enkel concrete uren waar het vastligt, de rest per dagdeel.
+insert into plan_items (day, part, position, time, title, note, location, url, status, details) values
+-- ───────── VRIJDAG 13 NOV ─────────
+('2026-11-13', 'Ochtend', 1, '09:40', '✈️ Vlucht SN 2581 naar Berlijn', 'Brussel 09:40 → Berlin BER 11:05', 'Brussels Airport', null, 'vast',
+$$## Vlucht
+- Brussels Airlines **SN 2581**
+- Vertrek Brussels Airport **09:40**
+- Landen in Berlin Brandenburg (BER) om **11:05**$$),
+
+('2026-11-13', 'Middag', 2, null, '🎒 Naar het hostel, shit droppen', 'Bagage weg en direct terug buiten.', 'Stresemannstraße 66, 10963 Berlin', null, 'vast',
+$$## Van BER naar het hostel
+- Ge hebt een ticket voor **zone ABC** nodig (BER ligt in zone C). Kopen in de BVG-app of aan de automaat. Papieren ticket? Niet vergeten afstempelen.
+- Trein van BER naar het centrum, en dan naar **Anhalter Bahnhof** (S-Bahn). Het hostel ligt daar om de hoek.
+- Reken ±45 min tot aan de deur.
+
+## Hostel
+- Stresemannstraße 66, 10963 Berlin (Kreuzberg)
+- De knop **🏠 Naar huis** bovenaan in de app brengt u altijd terug.$$),
+
+('2026-11-13', 'Middag', 3, null, '🍔 Snelle lunch + 1 of 2 grosses bier', 'Om in de stemming te komen 🍻', null, null, 'vast', null),
+
+('2026-11-13', 'Namiddag', 4, null, '🖼️ Neue Nationalgalerie', 'Tickets zitten in de app, geldig heel de dag. Senne gaat niet mee.', 'Neue Nationalgalerie, Potsdamer Straße 50, 10785 Berlin', 'https://www.smb.museum/en/museums-institutions/neue-nationalgalerie/home/', 'vast',
+$$## Praktisch
+- Ons ticket is een **Hausticket**: binnen in alle tentoonstellingen, heel de dag geldig (vr 13 nov).
+- 3 tickets zijn **ermäßigt** (€10, studententarief): **studentenkaart meepakken**, ze kunnen ernaar vragen. 1 ticket is **regulär** (€20).
+- Vanaf het hostel ±20 min te voet.
+- Grote rugzakken moeten waarschijnlijk in de vestiaire of een locker.
+
+## Het gebouw
+Het glazen paviljoen van **Ludwig Mies van der Rohe** uit 1968, een icoon van de moderne architectuur. Tussen 2015 en 2021 grondig gerenoveerd door David Chipperfield. Boven staat de grote glazen hal voor grote installaties, onder zitten de collectie en de andere tentoonstellingszalen.
+
+## Vaste collectie
+Kunst uit de 20e eeuw: expressionisme (Kirchner, Nolde), Neue Sachlichkeit (Otto Dix, George Grosz), Max Beckmann, en ook werk van o.a. Picasso, Klee en Kandinsky. Delen van de collectie worden soms heringericht, dus check ter plaatse welke zalen open zijn.
+
+## Tijdelijke expo: Maurizio Cattelan, NIGHT
+- Loopt van **10 sep 2026 tot 7 maart 2027**.
+- Cattelan krijgt de **Preis der Nationalgalerie 2026**, en dit is zijn eerste grote solo-expo in Duitsland.
+- Cattelan is de Italiaan van de banaan die met tape aan de muur hangt (*Comedian*) en het gouden wc (*America*). Reken op provocerend en grappig werk.
+- Bekende werken samen met nieuwe stukken die hij speciaal voor het gebouw van Mies van der Rohe maakte.$$),
+
+('2026-11-13', 'Namiddag', 5, null, '🍺 Welverdiende grosses bier', 'Na al die cultuur.', null, null, 'vast', null),
+
+('2026-11-13', 'Avond', 6, null, '🌆 Op ''t gemak terrassen rond Hackescher Markt', 'Eten, pinten, geen stress.', 'Hackescher Markt', null, 'vast',
+$$- Met het OV ±15 à 20 min vanaf Potsdamer Platz.
+- Rond de **Hackesche Höfe** en in de straten errond (Rosenthaler Straße, Oranienburger Straße) zitten veel bars en restaurants.
+- 't Is november: zoek een terras met heaters, of ga gewoon binnen zitten.$$),
+
+-- ───────── ZATERDAG 14 NOV ─────────
+('2026-11-14', 'Ochtend', 1, null, '🥐 Ontbijten', 'Op het gemak, maar om 09:30 staan we buiten!', null, null, 'vast', null),
+
+('2026-11-14', 'Ochtend', 2, '09:30', '🚇 Buiten staan, richting Gesundbrunnen', '±30 min OV, en we moeten er 10 min op voorhand zijn. Te laat = niet binnen!', 'S+U Gesundbrunnen', null, 'vast',
+$$- Bestemming: station **Gesundbrunnen** (U8, S1, S2, S25, S26, S41, S42).
+- Meetingpoint: **Brunnenstraße 105**, vóór het metrostation Gesundbrunnen.
+- Om **10:50** moeten we daar staan. Te laat komen kan niet.$$),
+
+('2026-11-14', 'Ochtend', 3, '11:00', '🕳️ Berliner Unterwelten: Dark Worlds', 'Engelstalige tour van 90 min onder de grond. Ticket zit in de app.', 'Brunnenstraße 105, 13355 Berlin', 'https://www.berliner-unterwelten.de/en/', 'vast',
+$$## Praktisch
+- **Dark Worlds** (Tour English), za 14 nov om **11:00**, duurt **90 min**
+- Boeking **60364 / 537991**, op naam van Bent, voor 5 personen
+- Meetingpoint: Brunnenstraße 105, vóór het metrostation Gesundbrunnen. **10 min op voorhand** zijn, te laat = niet binnen
+- **Stevige schoenen** aandoen
+- **Geen foto's of filmen**, en geen grote tassen of bagage mee
+
+## Wat is het?
+Berliner Unterwelten is een vereniging die de ondergrondse gebouwen van Berlijn onderzoekt en openstelt. Met Dark Worlds ga je onder station Gesundbrunnen een **schuilbunker uit de Tweede Wereldoorlog** in. De gids vertelt hoe Berlijners de bombardementen beleefden en hoe zo'n bunker werkte.
+
+Na de tour zit ge vlak bij het **Mauerpark** en de **Bernauer Straße** (Berlijnse Muur).$$),
+
+('2026-11-14', 'Middag', 4, null, '🍽️ Lunch in de buurt + eerste grosses bier van de dag', 'Rond Gesundbrunnen of richting Mauerpark.', null, null, 'vast', null),
+
+('2026-11-14', 'Namiddag', 5, null, '⛳ Pubgolf', 'Mix van cultuurstops en cafés met opdrachten. Parcours en scores: zie de Pubgolf-tab.', null, null, 'vast',
+$$- Het parcours (cultuurstops + cafés) staat in de **Pubgolf-tab**.
+- In elk café vult ge de slagen in. Laagste totaal wint.
+- Strafpunten tellen gewoon als extra slagen.$$),
+
+('2026-11-14', 'Avond', 6, null, '🥙 Kebab vatten', 'Berlijn = kebabhoofdstad.', null, null, 'vast',
+$$Bekende adressen (lange rij = goed teken):
+- **Mustafa's Gemüse Kebap**, Mehringdamm 32 (Kreuzberg)
+- **Rüyam Gemüse Kebab**, Hauptstraße 133 (Schöneberg)
+- Of gewoon de eerste Imbiss op de weg. Zelden slecht hier.$$),
+
+('2026-11-14', 'Nacht', 7, null, '🪩 Club proberen binnen te geraken', 'Eventueel. Aan de deur is niks zeker.', null, null, 'optioneel',
+$$## Tips voor de deur
+- In kleine groepjes van 2 à 3 aanschuiven, niet met 5 tegelijk
+- Rustig blijven in de rij: niet te zat, niet luid Nederlands roepen
+- Casual en donker gekleed
+- Weten wie er draait helpt: vooraf eens checken op Resident Advisor
+
+## Bekende clubs
+- **Berghain**, Am Wriezener Bahnhof (Friedrichshain): de bekendste, en de moeilijkste deur
+- **Sisyphos**, Hauptstraße 15 (Lichtenberg)
+- **Kater Blau**, Holzmarktstraße 25
+- **Tresor**, Köpenicker Straße 70$$),
+
+-- ───────── ZONDAG 15 NOV: volgt nog ─────────
+
+-- ───────── MAANDAG 16 NOV ─────────
+('2026-11-16', 'Ochtend', 1, null, '🧳 Uitchecken en naar BER', 'Rond 10:00 op de luchthaven zijn.', 'Berlin Brandenburg Airport', null, 'vast',
+$$- Zelfde weg terug: Anhalter Bahnhof → trein naar BER. Ticket **zone ABC**.
+- Reken ±45 min.$$),
+
+('2026-11-16', 'Middag', 2, '11:55', '✈️ Vlucht SN 2582 naar Brussel', 'BER 11:55 → Brussel 13:20', 'Berlin Brandenburg Airport', null, 'vast',
+$$## Vlucht
+- Brussels Airlines **SN 2582**
+- Vertrek Berlin Brandenburg (BER) **11:55**
+- Landen in Brussel om **13:20**$$);
 
 -- Fase 2
 create table quests (
@@ -109,8 +196,8 @@ do $$
 declare t text;
 begin
   foreach t in array array[
-    'players','drinks','golf_holes','golf_scores',
-    'plan_items','quests','quest_completions'
+    'players','golf_holes','golf_scores','plan_items',
+    'tickets','expenses','quests','quest_completions'
   ] loop
     execute format('alter table %I enable row level security', t);
     execute format('create policy "open_all" on %I for all using (true) with check (true)', t);

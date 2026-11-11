@@ -1,9 +1,9 @@
-export type Tab = 'pinten' | 'pubgolf' | 'planning'
+export type Tab = 'planning' | 'pubgolf' | 'kosten'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'pinten', label: 'Pinten', icon: '🍺' },
-  { id: 'pubgolf', label: 'Pubgolf', icon: '⛳' },
   { id: 'planning', label: 'Planning', icon: '📅' },
+  { id: 'pubgolf', label: 'Pubgolf', icon: '⛳' },
+  { id: 'kosten', label: 'Kosten', icon: '💶' },
 ]
 
 type Props = { tab: Tab; onChange: (t: Tab) => void }
