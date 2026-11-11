@@ -38,7 +38,7 @@ export function Kosten({ players, me, expenses, toast }: Props) {
       .single()
     if (error) return toast('Niet gelukt, probeer opnieuw')
     expenses.upsertLocal(data as Expense)
-    toast('Terugbetaling genoteerd 👍')
+    toast('Terugbetaling genoteerd')
   }
 
   return (
@@ -105,7 +105,6 @@ export function Kosten({ players, me, expenses, toast }: Props) {
                 onClick={() => setEditing(e)}
                 className={`flex w-full items-center gap-3 rounded-2xl border border-line p-4 text-left active:bg-line ${refund ? 'opacity-60' : 'bg-card'}`}
               >
-                <span className="text-2xl">{refund ? '↩️' : '🧾'}</span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-bold">{refund ? `${name(e.paid_by)} → ${name(e.split_between[0])}` : e.title}</span>
                   <span className="block text-sm text-zinc-400">

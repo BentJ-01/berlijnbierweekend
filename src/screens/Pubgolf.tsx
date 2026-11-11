@@ -75,7 +75,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
             <li key={player.id} className="flex items-center gap-3 py-1.5">
               <span className="w-5 text-zinc-500">{i + 1}</span>
               <span className={`flex-1 text-lg font-semibold ${player.id === me ? 'text-amber-300' : ''}`}>
-                {i === 0 && total > 0 && '🏆 '}
+                {i === 0 && total > 0 && '👑 '}
                 {player.name}
               </span>
               <span className="w-14 text-right text-sm text-zinc-400">{formatPar(diff)}</span>
@@ -92,19 +92,19 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
           if (stop.kind === 'cultuur') {
             return (
               <li key={stop.id} className="relative mb-3 pl-6">
-                <span className="absolute -left-[13px] top-4 flex h-6 w-6 items-center justify-center rounded-full bg-line text-xs">🏛️</span>
+                <span className="absolute -left-[13px] top-4 flex h-6 w-6 items-center justify-center rounded-full bg-line text-xs"><span className="h-2 w-2 rounded-full bg-zinc-400" /></span>
                 <div className="flex items-start rounded-2xl border border-line bg-bg">
                   <div className="min-w-0 flex-1 px-4 py-3">
                     <div className="text-xs font-bold uppercase tracking-wide text-zinc-500">Cultuurstop</div>
                     <div className="font-bold">{stop.bar_name || 'Stop'}</div>
                     {stop.description && <p className="mt-1 text-sm text-zinc-400">{stop.description}</p>}
                     <a
-                      href={mapsRouteUrl(withBerlin(stop.bar_name))}
+                      href={mapsRouteUrl(withBerlin(stop.location || stop.bar_name))}
                       target="_blank"
                       rel="noreferrer"
                       className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-amber-300"
                     >
-                      🧭 Route
+                      Route ›
                     </a>
                   </div>
                   <EditButton onClick={() => setEditing(stop)} />
@@ -134,7 +134,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                       Hole {n} · par {stop.par} · {filled}/{players.length}
                     </span>
                     <span className="block text-lg font-bold">{stop.bar_name || `Café ${n}`}</span>
-                    {stop.rule && <span className="mt-1 block text-amber-200">📜 {stop.rule}</span>}
+                    {stop.rule && <span className="mt-1 block text-amber-200">Opdracht: {stop.rule}</span>}
                   </button>
                   <EditButton onClick={() => setEditing(stop)} />
                 </div>
@@ -168,14 +168,14 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                         </div>
                       )
                     })}
-                    {stop.bar_name && (
+                    {(stop.location || stop.bar_name) && (
                       <a
-                        href={mapsRouteUrl(withBerlin(stop.bar_name))}
+                        href={mapsRouteUrl(withBerlin(stop.location || stop.bar_name))}
                         target="_blank"
                         rel="noreferrer"
                         className="flex min-h-11 items-center text-sm font-semibold text-amber-300"
                       >
-                        🧭 Route naar {stop.bar_name}
+                        Route naar {stop.bar_name || 'café'} ›
                       </a>
                     )}
                   </div>
@@ -208,8 +208,8 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
 
 function EditButton({ onClick }: { onClick: () => void }) {
   return (
-    <button className="w-12 shrink-0 text-lg text-zinc-500 active:bg-line" aria-label="Bewerken" onClick={onClick}>
-      ✏️
+    <button className="w-16 shrink-0 text-sm font-semibold text-zinc-500 active:bg-line" aria-label="Bewerken" onClick={onClick}>
+      Wijzig
     </button>
   )
 }
@@ -226,13 +226,14 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
   const [kind, setKind] = useState<HoleKind>(stop?.kind ?? 'cafe')
   const [name, setName] = useState(stop?.bar_name ?? '')
   const [description, setDescription] = useState(stop?.description ?? '')
+  const [location, setLocation] = useState(stop?.location ?? '')
   const [par, setPar] = useState(stop?.par ?? 3)
   const [rule, setRule] = useState(stop?.rule ?? '')
   const [busy, setBusy] = useState(false)
 
   async function save() {
     setBusy(true)
-    const values = { kind, bar_name: name.trim(), description: description.trim(), par, rule: kind === 'cafe' ? rule.trim() : '' }
+    const values = { kind, bar_name: name.trim(), description: description.trim(), location: location.trim() || null, par, rule: kind === 'cafe' ? rule.trim() : '' }
     const { data, error } = stop
       ? await supabase.from('golf_holes').update(values).eq('id', stop.id).select().single()
       : await supabase.from('golf_holes').insert({ ...values, position: nextPosition }).select().single()
@@ -261,12 +262,15 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
             onClick={() => setKind(k)}
             className={`min-h-12 rounded-xl font-semibold ${kind === k ? 'bg-amber-400 text-bg' : 'border border-line text-zinc-400'}`}
           >
-            {k === 'cafe' ? '🍺 Café (hole)' : '🏛️ Cultuurstop'}
+            {k === 'cafe' ? 'Café (hole)' : 'Cultuurstop'}
           </button>
         ))}
       </div>
       <Field label={kind === 'cafe' ? 'Naam café' : 'Naam stop'}>
         <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} placeholder={kind === 'cafe' ? 'Bv. Kneipe X' : 'Bv. Mauerpark'} />
+      </Field>
+      <Field label="Adres (voor de route, optioneel)">
+        <input className={inputClass} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Leeg = zoeken op naam" />
       </Field>
       <Field label="Uitleg">
         <textarea className={inputClass} rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optioneel" />
@@ -291,7 +295,7 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
             className="mb-5 min-h-12 w-full rounded-xl border border-line font-semibold text-amber-300 active:bg-line"
             onClick={() => setRule(randomRule(rule))}
           >
-            🎲 Random regel
+            Random opdracht
           </button>
         </>
       )}

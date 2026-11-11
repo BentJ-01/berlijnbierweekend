@@ -56,7 +56,7 @@ function Main() {
       <Centered>
         {playersTable.error ? (
           <>
-            <p className="text-xl font-bold">Geen verbinding 😬</p>
+            <p className="text-xl font-bold">Geen verbinding</p>
             <p className="mt-2 text-zinc-400">Check uw internet en probeer opnieuw.</p>
             <button
               className="mt-6 min-h-14 rounded-2xl bg-amber-400 px-6 font-bold text-bg"
@@ -78,7 +78,7 @@ function Main() {
     <div className="mx-auto min-h-dvh max-w-md pb-[calc(6rem+env(safe-area-inset-bottom))]">
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-bg/95 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] backdrop-blur">
         <span className="text-lg font-black">
-          Berlijn <span aria-hidden>🍺</span>
+          Berlijn
         </span>
         <div className="flex gap-2">
           <a
@@ -87,7 +87,7 @@ function Main() {
             rel="noreferrer"
             className="flex min-h-11 items-center rounded-full bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
           >
-            🏠 Naar huis
+            Naar huis
           </a>
           <button
             className="min-h-11 rounded-full border border-line px-3 text-sm text-zinc-300 active:bg-line"
