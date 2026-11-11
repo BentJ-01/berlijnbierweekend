@@ -1,7 +1,7 @@
-# Berlijn 🍺
+# Berlijn
 
 Kleine mobiele PWA voor ons vriendenweekend in Berlijn (13–16 november 2026).
-Pinten tellen, pubgolf scoren en een simpele planning. Alles live gedeeld via Supabase.
+Alle info op één plek: planning met tickets, pubgolf en gedeelde kosten.
 
 Spelers: Benjamin, Bent, Senne, Aaron, Lander.
 
@@ -13,7 +13,7 @@ Vite + React + TypeScript, Tailwind CSS, `vite-plugin-pwa`, Supabase (Postgres +
 
 1. **Supabase**: maak een (gratis) project aan op [supabase.com](https://supabase.com).
    Open de SQL Editor en voer [`supabase/schema.sql`](supabase/schema.sql) uit.
-   Dat maakt de tabellen, seedt de spelers, 9 placeholder holes en de 2 vluchten, en zet RLS (open policy) en Realtime aan.
+   Dat maakt de tabellen, seedt de spelers en de 6 café-holes, en zet RLS (open policy) en Realtime aan.
 2. **Env vars**: kopieer `.env.example` naar `.env` en vul in
    (Project Settings → API):
    ```
@@ -51,31 +51,29 @@ Daarna op de telefoon openen en installeren:
 ```
 src/
   App.tsx                 header, tabs, "Wie ben jij?"
-  components/             onderbalk, toast, modal, iOS-banner
-  screens/                Pinten, Pubgolf, Planning
+  data/
+    planning.ts           planning, eventinfo en tickets (hardcoded)
+    parcours.ts           pubgolf-parcours: cultuurstops en cafés
+  components/             onderbalk, toast, modal, QR-code, iOS-banner
+  screens/                Planning, Pubgolf, Kosten
   lib/
     useRealtimeTable.ts   tabel laden + live houden via Realtime
-    useDrinks.ts          pinten met optimistic UI en retry-queue
-    rules.ts              regels voor de random pubgolf-regel
+    money.ts              bedragen, verdelen en afrekenen
 supabase/schema.sql       schema + seed
 ```
 
 ## Hoe het werkt
 
 - **Geen login**: je kiest je naam, die wordt bewaard in `localStorage` (`currentPlayerId`).
-- **Pinten**: elke pint is een rij in `drinks`. Eén tik = +1 (optimistic), toast met "Ongedaan maken".
-  "−" haalt de laatste pint van die speler weg. Mislukte inserts blijven in een lokale queue
-  (`localStorage`) en worden opnieuw verstuurd bij reconnect.
-- **Pubgolf**: scores worden direct opgeslagen (upsert op `hole_id + player_id`).
-  De huidige hole is de eerste waar nog niet iedereen een score heeft.
-- **Planning**: gegroepeerd per dag, gesorteerd op tijd (zonder tijd onderaan).
+- **Planning**: staat in `src/data/planning.ts`. Per dag, per dagdeel, met een detailpagina per item.
+  Tickets worden als QR-code getoond, enkel aan wie ze toebehoren (groepstickets aan iedereen).
+- **Pubgolf**: het parcours staat in `src/data/parcours.ts`. Naam, par en opdracht van elk café
+  staan in `golf_holes` (aanpasbaar in de app), scores in `golf_scores`.
+- **Kosten**: uitgaven in `expenses`, gelijk verdeeld over wie meedeed. Saldo en "wie betaalt wie"
+  worden in de app berekend.
 - **PWA**: de service worker cachet enkel de app shell. Data komt altijd live van Supabase.
 
 ## Veiligheid
 
 Iedereen met de URL en anon key kan alles lezen en schrijven. Prima voor een privé weekendapp,
 niet gebruiken voor gevoelige data. Na het weekend mag het Supabase-project weg.
-
-## Fase 2 (optioneel)
-
-Quests als 4e tab. De tabellen `quests` en `quest_completions` staan al in het schema.

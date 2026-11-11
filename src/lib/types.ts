@@ -1,48 +1,9 @@
 export type Player = { id: string; name: string; sort_order: number }
 
-export type HoleKind = 'cafe' | 'cultuur'
-
-export type Hole = {
-  id: string
-  position: number
-  kind: HoleKind
-  bar_name: string
-  description: string
-  location: string | null
-  par: number
-  rule: string
-  created_at: string
-}
+/** Een café-hole van de pubgolf: de id's staan vast in src/data/parcours.ts. */
+export type Hole = { id: string; position: number; bar_name: string; par: number; rule: string; created_at: string }
 
 export type Score = { id: string; hole_id: string; player_id: string; strokes: number }
-
-export type PlanStatus = 'vast' | 'optioneel'
-
-export type PlanItem = {
-  id: string
-  day: string
-  part: string
-  position: number
-  time: string | null
-  title: string
-  location: string | null
-  note: string | null
-  details: string | null
-  url: string | null
-  status: PlanStatus
-  done: boolean
-  created_at: string
-}
-
-/** Ticket bij een planningsitem. player_id null = groepsticket voor iedereen. */
-export type Ticket = {
-  id: string
-  plan_item_id: string
-  player_id: string | null
-  label: string
-  code: string
-  info: string | null
-}
 
 export type Expense = {
   id: string
