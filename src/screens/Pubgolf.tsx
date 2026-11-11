@@ -60,15 +60,18 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
       .map((p) => {
         let total = 0
         let diff = 0
+        let played = 0
         for (const s of scores.rows) {
           const cafe = cafeById.get(s.hole_id)
           if (s.player_id !== p.id || !cafe) continue
           total += s.strokes
           diff += s.strokes - cafe.par
+          played++
         }
-        return { player: p, total, diff }
+        return { player: p, total, diff, played }
       })
-      .sort((a, b) => a.total - b.total || a.diff - b.diff || a.player.sort_order - b.player.sort_order)
+      // Wie nog niet speelde onderaan, de rest op verschil met par (zoals bij echt golf)
+      .sort((a, b) => Number(!a.played) - Number(!b.played) || a.diff - b.diff || a.total - b.total || a.player.sort_order - b.player.sort_order)
   }, [players, scores.rows, cafeById])
 
   async function setStrokes(cafe: Cafe, player: Player, strokes: number) {
@@ -89,17 +92,17 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
   return (
     <div className="px-4 pt-4">
       <section className="mb-6 rounded-2xl border border-line bg-card p-4">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Scorebord · laagste wint</h2>
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Scorebord · minst slagen t.o.v. par wint</h2>
         <ol className="flex flex-col">
-          {board.map(({ player, total, diff }, i) => (
+          {board.map(({ player, total, diff, played }, i) => (
             <li key={player.id} className="flex items-center gap-3 py-1.5">
               <span className="w-5 text-zinc-500">{i + 1}</span>
               <span className={`flex-1 text-lg font-semibold ${player.id === me ? 'text-amber-300' : ''}`}>
-                {i === 0 && total > 0 && '👑 '}
+                {i === 0 && played > 0 && '👑 '}
                 {player.name}
               </span>
-              <span className="w-14 text-right text-sm text-zinc-400">{formatPar(diff)}</span>
-              <span className="w-10 text-right text-2xl font-black tabular-nums">{total}</span>
+              <span className="w-14 text-right text-sm text-zinc-400">{played ? formatPar(diff) : ''}</span>
+              <span className="w-10 text-right text-2xl font-black tabular-nums">{played ? total : <span className="text-zinc-600">–</span>}</span>
             </li>
           ))}
         </ol>
