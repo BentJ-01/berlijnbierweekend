@@ -56,7 +56,7 @@ export const PARCOURS: Stop[] = [
     kind: 'cultuur',
     name: 'Reichstag: koepel (17:30)',
     location: 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin',
-    description: 'Gereserveerd om 17:30. Om 17:15 aan de bezoekersingang staan, iedereen ID mee! Zicht over heel Berlijn.',
+    description: 'Gereserveerd om 17:30. Om 17:15 aan de bezoekersingang (Platz der Republik), Bent toont de bevestiging, iedereen ID mee. Geen flessen meenemen!',
   },
   { kind: 'cafe', id: '150e636c-22ff-4624-ad05-97d0be86839a', hint: 'Café in de buurt.', defaultRule: 'Proost met iedereen in de bar' },
   {
