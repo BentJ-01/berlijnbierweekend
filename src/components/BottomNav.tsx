@@ -1,9 +1,12 @@
+import { CalendarDays, Flag, Wallet, type LucideIcon } from 'lucide-react'
+
 export type Tab = 'planning' | 'pubgolf' | 'kosten'
 
-const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'planning', label: 'Planning', icon: '📅' },
-  { id: 'pubgolf', label: 'Pubgolf', icon: '⛳' },
-  { id: 'kosten', label: 'Kosten', icon: '💶' },
+
+const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
+  { id: 'planning', label: 'Planning', icon: CalendarDays },
+  { id: 'pubgolf', label: 'Pubgolf', icon: Flag },
+  { id: 'kosten', label: 'Kosten', icon: Wallet },
 ]
 
 type Props = { tab: Tab; onChange: (t: Tab) => void }
@@ -22,7 +25,7 @@ export function BottomNav({ tab, onChange }: Props) {
                 active ? 'text-amber-400' : 'text-zinc-500'
               }`}
             >
-              <span className={`text-2xl ${active ? '' : 'opacity-60 grayscale'}`}>{t.icon}</span>
+              <t.icon size={24} strokeWidth={active ? 2.5 : 2} />
               {t.label}
             </button>
           )

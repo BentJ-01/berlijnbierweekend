@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Navigation, Pencil } from 'lucide-react'
 import { Field, Modal, inputClass } from '../components/Modal'
 import { PARCOURS, type CafeStop } from '../data/parcours'
 import { mapsRouteUrl, withBerlin } from '../lib/maps'
@@ -92,7 +93,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
   return (
     <div className="px-4 pt-4">
       <section className="mb-6 rounded-2xl border border-line bg-card p-4">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Scorebord · minst slagen t.o.v. par wint</h2>
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Scorebord</h2>
         <ol className="flex flex-col">
           {board.map(({ player, total, diff, played }, i) => (
             <li key={player.id} className="flex items-center gap-3 py-1.5">
@@ -124,9 +125,10 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                     href={mapsRouteUrl(stop.location)}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 inline-flex min-h-10 items-center text-sm font-semibold text-amber-300"
+                    className="mt-1 inline-flex min-h-10 items-center gap-1.5 text-sm font-semibold text-amber-300"
                   >
-                    Route in Maps ›
+                    <Navigation size={15} />
+                    Route in Maps
                   </a>
                 </div>
               </li>
@@ -158,10 +160,11 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                     {cafe.rule && <span className="mt-1 block text-amber-200">Opdracht: {cafe.rule}</span>}
                   </button>
                   <button
-                    className="w-16 shrink-0 text-sm font-semibold text-zinc-500 active:bg-line"
+                    className="flex w-14 shrink-0 items-center justify-center text-zinc-500 active:bg-line"
                     onClick={() => setEditing(cafe)}
+                    aria-label="Café wijzigen"
                   >
-                    Wijzig
+                    <Pencil size={18} />
                   </button>
                 </div>
 
@@ -198,9 +201,10 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                         href={mapsRouteUrl(withBerlin(cafe.name))}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex min-h-11 items-center text-sm font-semibold text-amber-300"
+                        className="flex min-h-11 items-center gap-1.5 text-sm font-semibold text-amber-300"
                       >
-                        Route naar {cafe.name} ›
+                        <Navigation size={15} />
+                        Route naar {cafe.name}
                       </a>
                     )}
                   </div>

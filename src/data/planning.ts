@@ -247,9 +247,11 @@ Het Duitse parlement, de Bundestag. Op het dak staat de glazen koepel van Norman
     day: '2026-11-14',
     part: 'Nacht',
     title: 'Club proberen binnen te geraken',
-    note: 'Eventueel. Aan de deur is niks zeker.',
+    note: 'Banja leidt ons. Aan de deur is niks zeker.',
     optional: true,
-    details: `## Tips voor de deur
+    details: `**Banja** is onze gids voor de nacht: kiest de club en zegt hoe we het aanpakken.
+
+## Tips voor de deur
 - In kleine groepjes van 2 à 3 aanschuiven, niet met 5 tegelijk
 - Rustig blijven in de rij: niet te zat, niet luid Nederlands roepen
 - Casual en donker gekleed
