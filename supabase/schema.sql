@@ -28,7 +28,7 @@ insert into golf_holes (position, kind, bar_name, location, description, par, ru
   (2, 'cafe', '', null, 'Café in de buurt, op weg naar de Bernauer Straße.', 3, 'Bestel in het Duits'),
   (3, 'cultuur', 'Gedenkstätte Berliner Mauer', 'Gedenkstätte Berliner Mauer, Bernauer Straße 111, 13355 Berlin', 'Het best bewaarde stuk Muur, met de dodenstrook en een wachttoren. Vanaf het uitkijkplatform aan het documentatiecentrum (Bernauer Str. 111, gratis) zie je alles van bovenaf.', 3, ''),
   (4, 'cafe', '', null, 'Café in de buurt. Daarna met de S-Bahn van Nordbahnhof naar Brandenburger Tor.', 3, 'Drink met je zwakke hand'),
-  (5, 'cultuur', 'Reichstag: koepel', 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin', 'Glazen koepel bovenop het parlement, met zicht over heel Berlijn. Gratis, maar enkel na **vooraf registreren** op bundestag.de (tijdslot). ID meenemen!', 3, ''),
+  (5, 'cultuur', 'Reichstag: koepel', 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin', 'Glazen koepel bovenop het parlement, met zicht over heel Berlijn. Gereserveerd om **17:30**. Om 17:15 aan de bezoekersingang staan, ID mee!', 3, ''),
   (6, 'cafe', '', null, 'Café in de buurt.', 3, 'Proost met iedereen in de bar'),
   (7, 'cultuur', 'Brandenburger Tor', 'Brandenburger Tor, Pariser Platz, 10117 Berlin', 'Hét symbool van Berlijn. Stond tot 1989 net in het niemandsland tussen Oost en West.', 3, ''),
   (8, 'cafe', '', null, 'Café in de buurt.', 3, 'Geen woord Nederlands tot je glas leeg is'),
@@ -170,7 +170,7 @@ $$## Parcours
 - Hole 1: café
 - Gedenkstätte Berliner Mauer
 - Hole 2: café
-- Reichstag: koepel (**vooraf registreren!**)
+- Reichstag: koepel (**17:30, gereserveerd**)
 - Hole 3: café
 - Brandenburger Tor
 - Hole 4: café
@@ -184,6 +184,16 @@ $$## Parcours
 - In elk café: slagen invullen in de **Pubgolf-tab**. Laagste totaal wint.
 - Elk café heeft een opdracht. Strafpunten tellen als extra slagen.
 - Welk café? Gewoon het eerste goeie in de buurt.$$),
+
+('2026-11-14', 'Namiddag', 6, '17:30', 'Reichstag: koepel', 'Gereserveerd. Om 17:15 aan de bezoekersingang staan, ID mee!', 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin', 'https://www.bundestag.de/en', 'vast',
+$$## Praktisch
+- Gereserveerd om **17:30**, voor 5 personen. Valt midden in de pubgolf, tussen café 2 en café 3.
+- Kom ±15 min vroeger naar de bezoekersingang: er is een veiligheidscontrole zoals op de luchthaven.
+- **Iedereen ID of paspoort mee.**
+- Geen grote tassen.
+
+## Wat is het?
+Het Duitse parlement, de Bundestag. Op het dak staat de glazen koepel van Norman Foster (1999): een wandelpad draait naar boven met zicht over heel de stad, en door het glas kijk je naar beneden in de vergaderzaal. Er is een gratis audiogids.$$),
 
 ('2026-11-14', 'Avond', 6, null, 'Kebab vatten', 'Berlijn = kebabhoofdstad.', null, null, 'vast',
 $$Bekende adressen (lange rij = goed teken):
@@ -204,7 +214,13 @@ $$## Tips voor de deur
 - **Kater Blau**, Holzmarktstraße 25
 - **Tresor**, Köpenicker Straße 70$$),
 
--- ───────── ZONDAG 15 NOV: volgt nog ─────────
+-- ───────── ZONDAG 15 NOV ─────────
+('2026-11-15', 'Middag', 1, null, 'East Side Gallery', 'Als we ooit wakker worden. De rest zien we wel.', 'East Side Gallery, Mühlenstraße, 10243 Berlin', null, 'vast',
+$$- Het langste stuk Berlijnse Muur dat nog overeind staat: ±1,3 km, beschilderd door kunstenaars uit de hele wereld na de val van de Muur.
+- Bekendste werk: de **broederkus** van Brezjnev en Honecker.
+- Dichtste stations: **Warschauer Straße** of **Ostbahnhof**.
+- Aan het einde ligt de **Oberbaumbrücke** over de Spree, richting Kreuzberg.$$),
+
 
 -- ───────── MAANDAG 16 NOV ─────────
 ('2026-11-16', 'Ochtend', 1, null, 'Uitchecken en naar BER', 'Rond 10:00 op de luchthaven zijn.', 'Berlin Brandenburg Airport', null, 'vast',
