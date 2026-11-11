@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { ArrowLeftRight, House } from 'lucide-react'
 import { BottomNav, type Tab } from './components/BottomNav'
 import { IosBanner } from './components/IosBanner'
 import { useToast } from './components/Toast'
@@ -75,23 +76,23 @@ function Main() {
   return (
     <div className="mx-auto min-h-dvh max-w-md pb-[calc(6rem+env(safe-area-inset-bottom))]">
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-bg/95 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] backdrop-blur">
-        <span className="text-lg font-black">
-          Berlijn
-        </span>
+        <span className="text-lg font-black">Berlijn 🍺</span>
         <div className="flex gap-2">
           <a
             href={SLAAPPLEK_ROUTE}
             target="_blank"
             rel="noreferrer"
-            className="flex min-h-11 items-center rounded-full bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
+            className="flex min-h-11 items-center gap-1.5 rounded-full bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
           >
+            <House size={16} strokeWidth={2.5} />
             Naar huis
           </a>
           <button
-            className="min-h-11 rounded-full border border-line px-3 text-sm text-zinc-300 active:bg-line"
+            className="flex min-h-11 items-center gap-1.5 rounded-full border border-line px-3 text-sm text-zinc-300 active:bg-line"
             onClick={() => pick(null)}
           >
-            {current.name} ⇄
+            {current.name}
+            <ArrowLeftRight size={14} />
           </button>
         </div>
       </header>

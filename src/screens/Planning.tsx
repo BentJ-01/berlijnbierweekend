@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight, Globe, Info, MapPin, Navigation, Ticket as TicketIcon } from 'lucide-react'
 import { QrCode } from '../components/QrCode'
 import { RichText } from '../components/RichText'
 import { DAYS, PLANNING, TICKETS, type PlanItem, type Ticket } from '../data/planning'
@@ -80,12 +81,12 @@ export function Planning({ players, me }: Props) {
                     {item.note && <p className="mt-1 text-sm text-zinc-400">{item.note}</p>}
                     <div className="mt-2 flex flex-wrap gap-1.5 text-xs font-semibold">
                       {item.optional && <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-zinc-400">eventueel</span>}
-                      {myTicket && <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-amber-300">ticket</span>}
-                      {item.details && <span className="rounded-full bg-line px-2 py-0.5 text-zinc-300">info</span>}
-                      {item.location && <span className="rounded-full bg-line px-2 py-0.5 text-zinc-300">{item.location.split(',')[0]}</span>}
+                      {myTicket && <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/20 px-2 py-0.5 text-amber-300"><TicketIcon size={12} />ticket</span>}
+                      {item.details && <span className="inline-flex items-center gap-1 rounded-full bg-line px-2 py-0.5 text-zinc-300"><Info size={12} />info</span>}
+                      {item.location && <span className="inline-flex items-center gap-1 rounded-full bg-line px-2 py-0.5 text-zinc-300"><MapPin size={12} />{item.location.split(',')[0]}</span>}
                     </div>
                   </div>
-                  <span className="mt-1 text-xl text-zinc-600">›</span>
+                  <ChevronRight className="mt-1 shrink-0 text-zinc-600" size={22} />
                 </button>
               </li>
             )
@@ -109,7 +110,7 @@ function EventSheet({ item, myName, onClose }: { item: PlanItem; myName: string;
     <div className="fixed inset-0 z-40 overflow-y-auto bg-bg">
       <div className="mx-auto max-w-md px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(0.75rem+env(safe-area-inset-top))]">
         <button onClick={onClose} className="-ml-2 mb-4 flex min-h-11 items-center px-2 font-semibold text-amber-300 active:opacity-60">
-          ‹ Terug
+          <ChevronLeft size={20} /> Terug
         </button>
 
         <p className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
@@ -126,8 +127,9 @@ function EventSheet({ item, myName, onClose }: { item: PlanItem; myName: string;
                 href={mapsRouteUrl(withBerlin(item.location))}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-h-12 items-center rounded-xl bg-amber-400 px-4 font-bold text-bg active:bg-amber-300"
+                className="flex min-h-12 items-center gap-2 rounded-xl bg-amber-400 px-4 font-bold text-bg active:bg-amber-300"
               >
+                <Navigation size={18} strokeWidth={2.5} />
                 Route in Maps
               </a>
             )}
@@ -136,15 +138,21 @@ function EventSheet({ item, myName, onClose }: { item: PlanItem; myName: string;
                 href={item.url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-h-12 items-center rounded-xl border border-line px-4 font-semibold text-zinc-200 active:bg-line"
+                className="flex min-h-12 items-center gap-2 rounded-xl border border-line px-4 font-semibold text-zinc-200 active:bg-line"
               >
+                <Globe size={18} />
                 Website
               </a>
             )}
           </div>
         )}
 
-        {item.location && <p className="-mt-3 mb-6 text-sm text-zinc-500">{item.location}</p>}
+        {item.location && (
+          <p className="-mt-3 mb-6 flex items-start gap-1.5 text-sm text-zinc-500">
+            <MapPin size={16} className="mt-0.5 shrink-0" />
+            {item.location}
+          </p>
+        )}
 
         {mine.map((t) => (
           <section key={t.code} className="mb-6">
