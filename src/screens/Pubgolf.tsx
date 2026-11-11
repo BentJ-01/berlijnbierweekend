@@ -75,7 +75,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
             <li key={player.id} className="flex items-center gap-3 py-1.5">
               <span className="w-5 text-zinc-500">{i + 1}</span>
               <span className={`flex-1 text-lg font-semibold ${player.id === me ? 'text-amber-300' : ''}`}>
-                {i === 0 && total > 0 && '🏆 '}
+                {i === 0 && total > 0 && '👑 '}
                 {player.name}
               </span>
               <span className="w-14 text-right text-sm text-zinc-400">{formatPar(diff)}</span>
@@ -92,7 +92,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
           if (stop.kind === 'cultuur') {
             return (
               <li key={stop.id} className="relative mb-3 pl-6">
-                <span className="absolute -left-[13px] top-4 flex h-6 w-6 items-center justify-center rounded-full bg-line text-xs">🏛️</span>
+                <span className="absolute -left-[13px] top-4 flex h-6 w-6 items-center justify-center rounded-full bg-line text-xs"><span className="h-2 w-2 rounded-full bg-zinc-400" /></span>
                 <div className="flex items-start rounded-2xl border border-line bg-bg">
                   <div className="min-w-0 flex-1 px-4 py-3">
                     <div className="text-xs font-bold uppercase tracking-wide text-zinc-500">Cultuurstop</div>
@@ -104,7 +104,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                       rel="noreferrer"
                       className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-amber-300"
                     >
-                      🧭 Route
+                      Route ›
                     </a>
                   </div>
                   <EditButton onClick={() => setEditing(stop)} />
@@ -134,7 +134,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                       Hole {n} · par {stop.par} · {filled}/{players.length}
                     </span>
                     <span className="block text-lg font-bold">{stop.bar_name || `Café ${n}`}</span>
-                    {stop.rule && <span className="mt-1 block text-amber-200">📜 {stop.rule}</span>}
+                    {stop.rule && <span className="mt-1 block text-amber-200">Opdracht: {stop.rule}</span>}
                   </button>
                   <EditButton onClick={() => setEditing(stop)} />
                 </div>
@@ -175,7 +175,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                         rel="noreferrer"
                         className="flex min-h-11 items-center text-sm font-semibold text-amber-300"
                       >
-                        🧭 Route naar {stop.bar_name || 'café'}
+                        Route naar {stop.bar_name || 'café'} ›
                       </a>
                     )}
                   </div>
@@ -208,8 +208,8 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
 
 function EditButton({ onClick }: { onClick: () => void }) {
   return (
-    <button className="w-12 shrink-0 text-lg text-zinc-500 active:bg-line" aria-label="Bewerken" onClick={onClick}>
-      ✏️
+    <button className="w-16 shrink-0 text-sm font-semibold text-zinc-500 active:bg-line" aria-label="Bewerken" onClick={onClick}>
+      Wijzig
     </button>
   )
 }
@@ -262,7 +262,7 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
             onClick={() => setKind(k)}
             className={`min-h-12 rounded-xl font-semibold ${kind === k ? 'bg-amber-400 text-bg' : 'border border-line text-zinc-400'}`}
           >
-            {k === 'cafe' ? '🍺 Café (hole)' : '🏛️ Cultuurstop'}
+            {k === 'cafe' ? 'Café (hole)' : 'Cultuurstop'}
           </button>
         ))}
       </div>
@@ -295,7 +295,7 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
             className="mb-5 min-h-12 w-full rounded-xl border border-line font-semibold text-amber-300 active:bg-line"
             onClick={() => setRule(randomRule(rule))}
           >
-            🎲 Random regel
+            Random opdracht
           </button>
         </>
       )}

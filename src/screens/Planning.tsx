@@ -110,9 +110,9 @@ export function Planning({ items, tickets, players, me, toast }: Props) {
                     {item.note && <p className="mt-1 text-sm text-zinc-400">{item.note}</p>}
                     <div className="mt-2 flex flex-wrap gap-1.5 text-xs font-semibold">
                       {optional && <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-zinc-400">eventueel</span>}
-                      {myTicket && <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-amber-300">🎟️ ticket</span>}
-                      {item.details && <span className="rounded-full bg-line px-2 py-0.5 text-zinc-300">ℹ️ info</span>}
-                      {item.location && <span className="rounded-full bg-line px-2 py-0.5 text-zinc-300">📍 {shortPlace(item.location)}</span>}
+                      {myTicket && <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-amber-300">ticket</span>}
+                      {item.details && <span className="rounded-full bg-line px-2 py-0.5 text-zinc-300">info</span>}
+                      {item.location && <span className="rounded-full bg-line px-2 py-0.5 text-zinc-300">{shortPlace(item.location)}</span>}
                     </div>
                   </div>
                   <span className="mt-1 text-xl text-zinc-600">›</span>
@@ -184,7 +184,7 @@ function EventSheet({ item, tickets, players, me, onClose, onEdit }: SheetProps)
             ‹ Terug
           </button>
           <button onClick={onEdit} className="min-h-11 rounded-full px-3 text-sm text-zinc-400 active:bg-line">
-            ✏️ Bewerken
+            Bewerken
           </button>
         </div>
 
@@ -203,7 +203,7 @@ function EventSheet({ item, tickets, players, me, onClose, onEdit }: SheetProps)
               rel="noreferrer"
               className="flex min-h-12 items-center rounded-xl bg-amber-400 px-4 font-bold text-bg active:bg-amber-300"
             >
-              🧭 Route
+              Route
             </a>
           )}
           {item.url && (
@@ -213,12 +213,12 @@ function EventSheet({ item, tickets, players, me, onClose, onEdit }: SheetProps)
               rel="noreferrer"
               className="flex min-h-12 items-center rounded-xl border border-line px-4 font-semibold text-zinc-200 active:bg-line"
             >
-              🌐 Website
+              Website
             </a>
           )}
         </div>
 
-        {item.location && <p className="-mt-3 mb-6 text-sm text-zinc-500">📍 {item.location}</p>}
+        {item.location && <p className="-mt-3 mb-6 text-sm text-zinc-500">{item.location}</p>}
 
         {mine.map((t) => (
           <section key={t.id} className="mb-6">
