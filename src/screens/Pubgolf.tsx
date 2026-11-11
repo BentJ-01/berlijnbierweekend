@@ -99,7 +99,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                     <div className="font-bold">{stop.bar_name || 'Stop'}</div>
                     {stop.description && <p className="mt-1 text-sm text-zinc-400">{stop.description}</p>}
                     <a
-                      href={mapsRouteUrl(withBerlin(stop.bar_name))}
+                      href={mapsRouteUrl(withBerlin(stop.location || stop.bar_name))}
                       target="_blank"
                       rel="noreferrer"
                       className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-amber-300"
@@ -168,14 +168,14 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                         </div>
                       )
                     })}
-                    {stop.bar_name && (
+                    {(stop.location || stop.bar_name) && (
                       <a
-                        href={mapsRouteUrl(withBerlin(stop.bar_name))}
+                        href={mapsRouteUrl(withBerlin(stop.location || stop.bar_name))}
                         target="_blank"
                         rel="noreferrer"
                         className="flex min-h-11 items-center text-sm font-semibold text-amber-300"
                       >
-                        🧭 Route naar {stop.bar_name}
+                        🧭 Route naar {stop.bar_name || 'café'}
                       </a>
                     )}
                   </div>
@@ -226,13 +226,14 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
   const [kind, setKind] = useState<HoleKind>(stop?.kind ?? 'cafe')
   const [name, setName] = useState(stop?.bar_name ?? '')
   const [description, setDescription] = useState(stop?.description ?? '')
+  const [location, setLocation] = useState(stop?.location ?? '')
   const [par, setPar] = useState(stop?.par ?? 3)
   const [rule, setRule] = useState(stop?.rule ?? '')
   const [busy, setBusy] = useState(false)
 
   async function save() {
     setBusy(true)
-    const values = { kind, bar_name: name.trim(), description: description.trim(), par, rule: kind === 'cafe' ? rule.trim() : '' }
+    const values = { kind, bar_name: name.trim(), description: description.trim(), location: location.trim() || null, par, rule: kind === 'cafe' ? rule.trim() : '' }
     const { data, error } = stop
       ? await supabase.from('golf_holes').update(values).eq('id', stop.id).select().single()
       : await supabase.from('golf_holes').insert({ ...values, position: nextPosition }).select().single()
@@ -267,6 +268,9 @@ function StopForm({ stop, nextPosition, onClose, holes, toast }: FormProps) {
       </div>
       <Field label={kind === 'cafe' ? 'Naam café' : 'Naam stop'}>
         <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} placeholder={kind === 'cafe' ? 'Bv. Kneipe X' : 'Bv. Mauerpark'} />
+      </Field>
+      <Field label="Adres (voor de route, optioneel)">
+        <input className={inputClass} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Leeg = zoeken op naam" />
       </Field>
       <Field label="Uitleg">
         <textarea className={inputClass} rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optioneel" />
