@@ -6,7 +6,7 @@ import { WhoAreYou } from './components/WhoAreYou'
 import { readString, writeString } from './lib/storage'
 import { mapsRouteUrl } from './lib/maps'
 import { isConfigured } from './lib/supabase'
-import type { Expense, Hole, PlanItem, Player, Score, Ticket } from './lib/types'
+import type { Expense, Hole, Player, Score } from './lib/types'
 import { useRealtimeTable } from './lib/useRealtimeTable'
 import { Kosten } from './screens/Kosten'
 import { Planning } from './screens/Planning'
@@ -39,8 +39,6 @@ function Main() {
   const playersTable = useRealtimeTable<Player>('players')
   const holes = useRealtimeTable<Hole>('golf_holes')
   const scores = useRealtimeTable<Score>('golf_scores', scoreKeyOf)
-  const plan = useRealtimeTable<PlanItem>('plan_items')
-  const tickets = useRealtimeTable<Ticket>('tickets')
   const expenses = useRealtimeTable<Expense>('expenses')
 
   const players = [...playersTable.rows].sort((a, b) => a.sort_order - b.sort_order)
@@ -101,7 +99,7 @@ function Main() {
       <IosBanner />
 
       {tab === 'planning' && (
-        <Planning items={plan} tickets={tickets.rows} players={players} me={current.id} toast={toast.show} />
+        <Planning players={players} me={current.id} />
       )}
       {tab === 'pubgolf' && <Pubgolf players={players} me={current.id} holes={holes} scores={scores} toast={toast.show} />}
       {tab === 'kosten' && <Kosten players={players} me={current.id} expenses={expenses} toast={toast.show} />}
