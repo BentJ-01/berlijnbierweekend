@@ -13,7 +13,7 @@ Vite + React + TypeScript, Tailwind CSS, `vite-plugin-pwa`, Supabase (Postgres +
 
 1. **Supabase**: maak een (gratis) project aan op [supabase.com](https://supabase.com).
    Open de SQL Editor en voer [`supabase/schema.sql`](supabase/schema.sql) uit.
-   Dat maakt de tabellen, seedt de spelers en de 6 café-holes, en zet RLS (open policy) en Realtime aan.
+   Dat maakt de tabellen, seedt de spelers en de 7 café-holes, en zet RLS (open policy) en Realtime aan.
 2. **Env vars**: kopieer `.env.example` naar `.env` en vul in
    (Project Settings → API):
    ```

@@ -20,6 +20,12 @@ export type Stop = CultuurStop | CafeStop
 
 export const PARCOURS: Stop[] = [
   {
+    kind: 'cafe',
+    id: '702b63b4-351b-4c9d-bbb2-4520c83278e3',
+    hint: 'Kan meteen bij de Späti van Harmonie: blikje kopen en op de stoep drinken. Snel en goedkoop.',
+    defaultRule: 'Drink staand',
+  },
+  {
     kind: 'cultuur',
     name: 'The Berlin Wall and its Fall',
     location: 'Schwedter Straße, 10119 Berlin',
@@ -36,8 +42,15 @@ export const PARCOURS: Stop[] = [
   {
     kind: 'cafe',
     id: '9e48080e-b5ee-44e0-bdd1-19c950dee121',
-    hint: 'Café in de buurt. Daarna met de S-Bahn van Nordbahnhof naar Brandenburger Tor.',
+    hint: 'Café in de buurt van de Bernauer Straße. Daarna S-Bahn van Nordbahnhof naar Brandenburger Tor (S1, S2 of S25, 2 haltes). Om 17:15 aan de Reichstag!',
     defaultRule: 'Drink met je zwakke hand',
+  },
+  {
+    kind: 'cultuur',
+    name: 'Weiße Kreuze',
+    location: 'Gedenkstätte Weiße Kreuze, Reichstagufer, 10117 Berlin',
+    description:
+      'Witte kruisen aan de Spree, vlak bij de Reichstag, voor mensen die stierven bij een vluchtpoging over de Muur. Ligt op de wandeling van station Brandenburger Tor naar de ingang van de Reichstag: 5 min, geen eigen hole.',
   },
   {
     kind: 'cultuur',
