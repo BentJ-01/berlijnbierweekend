@@ -26,7 +26,11 @@ export function Planning({ players, me }: Props) {
   const dayItems = PLANNING.filter((i) => i.day === day)
   const open = PLANNING.find((i) => i.id === openId) ?? null
 
-  useEffect(() => top.current?.scrollIntoView({ block: 'start' }), [day])
+  // Blok-body: scrollIntoView geeft in nieuwe browsers een Promise terug, en die mag
+  // niet als opruimfunctie van het effect terugkomen (crasht bij het wisselen van tab).
+  useEffect(() => {
+    top.current?.scrollIntoView({ block: 'start' })
+  }, [day])
 
   return (
     <div ref={top} className="scroll-mt-20">
