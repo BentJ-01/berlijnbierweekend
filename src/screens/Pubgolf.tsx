@@ -51,7 +51,9 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
 
   // undefined = volg de huidige hole, null = alles dicht, string = manueel gekozen
   const [manualOpen, setManualOpen] = useState<string | null | undefined>(undefined)
-  useEffect(() => setManualOpen(undefined), [current?.id])
+  useEffect(() => {
+    setManualOpen(undefined)
+  }, [current?.id])
   const openId = manualOpen === undefined ? current?.id : manualOpen
 
   const [editing, setEditing] = useState<Cafe | null>(null)
