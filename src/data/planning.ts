@@ -194,18 +194,21 @@ Na de tour zit ge vlak bij het **Mauerpark** en de **Bernauer Straße** (Berlijn
     title: 'Culturele pubgolf',
     note: 'Van de Muur tot Unter den Linden, met telkens een café ertussen. Scores in de Pubgolf-tab.',
     details: `## Parcours
+- Hole 1: Späti van Harmonie of café in de buurt
 - The Berlin Wall and its Fall (Schwedter Straße)
-- Hole 1: café
-- Gedenkstätte Berliner Mauer
 - Hole 2: café
-- Reichstag: koepel (**17:30, gereserveerd**)
+- Gedenkstätte Berliner Mauer
 - Hole 3: café
-- Brandenburger Tor
+- S-Bahn Nordbahnhof → Brandenburger Tor
+- Weiße Kreuze (op weg naar de ingang, 5 min)
+- Reichstag: koepel (**17:30, gereserveerd**)
 - Hole 4: café
-- Holocaust-Mahnmal
+- Brandenburger Tor
 - Hole 5: café
-- Checkpoint Charlie
+- Holocaust-Mahnmal
 - Hole 6: café
+- Checkpoint Charlie
+- Hole 7: café
 - Unter den Linden en Bebelplatz
 
 ## Regels
@@ -223,7 +226,7 @@ Na de tour zit ge vlak bij het **Mauerpark** en de **Bernauer Straße** (Berlijn
     location: 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin',
     url: 'https://www.bundestag.de/en',
     details: `## Praktisch
-- Gereserveerd om **17:30**, voor 5 personen. Valt midden in de pubgolf, tussen café 2 en café 3.
+- Gereserveerd om **17:30**, voor 5 personen. Valt midden in de pubgolf, tussen café 3 en café 4.
 - Kom ±15 min vroeger naar de bezoekersingang: er is een veiligheidscontrole zoals op de luchthaven.
 - **Iedereen ID of paspoort mee.**
 - Geen grote tassen.

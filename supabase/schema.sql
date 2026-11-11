@@ -22,6 +22,7 @@ create table golf_holes (
 );
 
 insert into golf_holes (id, position, bar_name, par, rule) values
+  ('702b63b4-351b-4c9d-bbb2-4520c83278e3', 0, '', 3, 'Drink staand'),
   ('768e523d-46ea-4230-a09c-8ceb1ec0e2f1', 1, '', 3, 'Bestel in het Duits'),
   ('9e48080e-b5ee-44e0-bdd1-19c950dee121', 2, '', 3, 'Drink met je zwakke hand'),
   ('150e636c-22ff-4624-ad05-97d0be86839a', 3, '', 3, 'Proost met iedereen in de bar'),
