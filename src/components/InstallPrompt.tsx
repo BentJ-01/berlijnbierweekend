@@ -42,7 +42,7 @@ export function InstallPrompt() {
       <div className="w-full max-w-md rounded-3xl border border-amber-400/40 bg-card p-6">
         <div className="mb-1 text-5xl">🍺</div>
         <h2 className="text-2xl font-black">Download BerlijnBierApp</h2>
-        <p className="mt-1 text-zinc-400">Zet de app op je beginscherm: opent sneller, schermvullend, en alles altijd bij de hand.</p>
+        <p className="mt-1 text-zinc-400">Jow bierdrinkers, bij deze effe BerlijnBierApp me wa planning & info & tickets & pubgolf. Zet effe op beginscherm, is handiger.</p>
 
         <div className="mt-5 flex flex-col gap-2">
           {canPrompt ? (
