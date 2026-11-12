@@ -61,7 +61,7 @@ export const PLANNING: PlanItem[] = [
 
 ## Hostel
 - Stresemannstraße 66, 10963 Berlin (Kreuzberg)
-- De knop **Naar huis** bovenaan in de app brengt u altijd terug.`,
+- De knop **Zoek bedje** bovenaan in de app brengt u altijd terug.`,
   },
   {
     id: 'lunch-vr',
