@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Navigation, Pencil } from 'lucide-react'
 import { Field, Modal, inputClass } from '../components/Modal'
-import { PARCOURS, type CafeStop } from '../data/parcours'
+import { PARCOURS, type CafeStop, type QuizVraag } from '../data/parcours'
 import { mapsRouteUrl, withBerlin } from '../lib/maps'
 import { randomRule } from '../lib/rules'
 import { supabase, uuid, vibrate } from '../lib/supabase'
@@ -198,6 +198,7 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
                         </div>
                       )
                     })}
+                    {cafe.quiz && <Quiz vragen={cafe.quiz} />}
                     {cafe.name && (
                       <a
                         href={mapsRouteUrl(withBerlin(cafe.name))}
@@ -218,6 +219,38 @@ export function Pubgolf({ players, me, holes, scores, toast }: Props) {
       </ol>
 
       {editing && <CafeForm cafe={editing} holes={holes} toast={toast} onClose={() => setEditing(null)} />}
+    </div>
+  )
+}
+
+function Quiz({ vragen }: { vragen: QuizVraag[] }) {
+  const [shown, setShown] = useState<Set<number>>(new Set())
+  const toggle = (i: number) =>
+    setShown((s) => {
+      const next = new Set(s)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+
+  return (
+    <div className="mt-3 border-t border-line pt-3">
+      <h3 className="mb-1 text-sm font-bold uppercase tracking-wide text-zinc-500">Quizvragen</h3>
+      <p className="mb-2 text-sm text-zinc-400">Eén iemand leest voor. Om de beurt antwoorden, fout = afgevallen.</p>
+      <ol className="flex flex-col gap-2">
+        {vragen.map((v, i) => (
+          <li key={i}>
+            <button onClick={() => toggle(i)} className="w-full rounded-xl bg-bg p-3 text-left active:bg-line">
+              <span className="block font-semibold">
+                {i + 1}. {v.q}
+              </span>
+              <span className={`mt-1 block text-sm ${shown.has(i) ? 'text-amber-300' : 'text-zinc-600'}`}>
+                {shown.has(i) ? v.a : 'Tik om het antwoord te zien'}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
