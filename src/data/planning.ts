@@ -204,7 +204,7 @@ Na de tour zit ge vlak bij het **Mauerpark** en de **Bernauer Straße** (Berlijn
 - Hole 3: café
 - S-Bahn Nordbahnhof → Brandenburger Tor
 - Weiße Kreuze (op weg naar de ingang, 5 min)
-- Reichstag: koepel (**17:30, gereserveerd**)
+- Reichstag: koepel (zonder reservatie, proberen binnen te geraken)
 - Hole 4: café
 - Brandenburger Tor
 - Hole 5: café
@@ -223,33 +223,28 @@ Na de tour zit ge vlak bij het **Mauerpark** en de **Bernauer Straße** (Berlijn
     id: 'reichstag',
     day: '2026-11-14',
     part: 'Namiddag',
-    time: '17:30',
     title: 'Reichstag: koepel',
-    note: 'Om 17:15 aan de bezoekersingang staan, Bent toont de bevestiging. ID mee!',
+    note: 'Geen reservatie: we gaan langs en zien of er plek is. ID mee!',
     location: 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin',
     url: 'https://www.bundestag.de/en',
-    details: `## Let op: datum klopt niet!
-De bevestiging van de Bundestag staat op **zaterdag 21 november 2026**, niet op 14 november. Nog aanpassen via **kuppelbesuch@bundestag.de** (vermeld boekingsnummer SYS-20261111-180928) of opnieuw boeken op bundestag.de.
+    details: `## Geen reservatie
+Online was alles volzet voor zaterdag (onze boeking staat per ongeluk op 21 november). We gaan dus gewoon langs tijdens de pubgolf en zien of er nog plek is. Lukt het niet, dan gaan we gewoon door naar de volgende hole.
 
-## Boeking
-- **Boekingsnummer SYS-20261111-180928**, op naam van Bent Jacobs
-- Bezoek aan het dakterras en de koepel, gratis, voor **5 personen**
-- Tijdstip: **17:30** (geplande toegang)
-- Bent heeft de bevestiging (pdf in de mail) en moet die bij de ingang tonen. We gaan **samen als groep** binnen.
+## Zo maak je de meeste kans
+- **Online blijven checken** op bundestag.de: er komen soms last minute plekken vrij door annuleringen.
+- Ter plaatse: vraag aan het **bezoekerscentrum** naast de Reichstag of er nog vrije plekken zijn. Meestal krijg je dan een tijdslot voor wat later op de dag.
+- **Iedereen ID of paspoort mee**, anders kom je zeker niet binnen.
 
-## Aan de ingang
-- Ten laatste om **17:15** aan de **centrale bezoekersingang (ZEB)** op de Platz der Republik, ter hoogte van het westportaal van de Reichstag.
-- Iedereen een geldig **identiteitsbewijs of paspoort** mee, anders kom je niet binnen.
+## Als we binnen geraken
+- Ingang: **centrale bezoekersingang (ZEB)** op de Platz der Republik, aan het westportaal.
 - Controle zoals op de luchthaven: tassen en jassen door de röntgen, metaaldetector.
 - **Niet meenemen:** flessen (dus geen bier van de pubgolf mee), messen, pepperspray, laserpointers, fluitjes.
-- Kleding en gedrag moeten "passend" zijn: niet te zat aankomen dus.
-
-## Goed om te weten
-- De koepel kan op het laatste moment dicht zijn (zittingen, evenementen, slecht weer). Een annulering komt enkel per mail, dus check de mail van Bent die dag.
+- Niet te zat aankomen: kleding en gedrag moeten "passend" zijn.
 - Gratis **audiogids** op het dakterras, ook in het Nederlands.
 
 ## Wat is het?
 Het Duitse parlement, de Bundestag. Op het dak staat de glazen koepel van Norman Foster (1999): een wandelpad draait naar boven met zicht over heel de stad, en door het glas kijk je naar beneden in de vergaderzaal.`,
+
 
   },
   {
