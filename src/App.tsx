@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { ArrowLeftRight, House } from 'lucide-react'
 import { BottomNav, type Tab } from './components/BottomNav'
-import { IosBanner } from './components/IosBanner'
 import { useToast } from './components/Toast'
 import { WhoAreYou } from './components/WhoAreYou'
 import { readString, writeString } from './lib/storage'
@@ -97,7 +96,6 @@ function Main() {
         </div>
       </header>
 
-      <IosBanner />
 
       {tab === 'planning' && (
         <Planning players={players} me={current.id} />
