@@ -85,7 +85,7 @@ function Main() {
             className="flex min-h-11 items-center gap-1.5 rounded-full bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
           >
             <House size={16} strokeWidth={2.5} />
-            Naar huis
+            Zoek bedje
           </a>
           <button
             className="flex min-h-11 items-center gap-1.5 rounded-full border border-line px-3 text-sm text-zinc-300 active:bg-line"
