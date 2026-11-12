@@ -30,7 +30,11 @@ export function Kosten({ players, me, expenses, toast }: Props) {
   const myBalance = balances.get(me) ?? 0
 
   async function markPaid(from: string, to: string, cents: number) {
-    if (!confirm(`${name(from)} heeft ${formatEuro(cents)} aan ${name(to)} betaald?`)) return
+    const question =
+      from === me
+        ? `Hebt ge zeker ${formatEuro(cents)} aan ${name(to)} gestort?`
+        : `Heeft ${name(from)} zeker ${formatEuro(cents)} aan ${name(to)} gestort?`
+    if (!confirm(question)) return
     const { data, error } = await supabase
       .from('expenses')
       .insert({ title: REFUND_TITLE, amount_cents: cents, paid_by: from, split_between: [to] })

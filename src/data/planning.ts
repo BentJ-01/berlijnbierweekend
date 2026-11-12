@@ -101,7 +101,7 @@ Kunst uit de 20e eeuw: expressionisme (Kirchner, Nolde), Neue Sachlichkeit (Otto
     day: '2026-11-13',
     part: 'Namiddag',
     title: 'Welverdiende grosses bier',
-    note: 'Na al die cultuur.',
+    note: 'Na al dieje cultuur.',
   },
   {
     id: 'kudamm',
@@ -129,7 +129,7 @@ Kunst uit de 20e eeuw: expressionisme (Kirchner, Nolde), Neue Sachlichkeit (Otto
     day: '2026-11-13',
     part: 'Avond',
     title: 'Pint met zicht op de apen van de Zoo',
-    note: 'Op het dak van Bikini Berlin. Andere apen dan Lander, normaal gezien.',
+    note: 'Op het dak van Bikini Berlin. Andere apen dan de Lander.',
     location: 'Bikini Berlin, Budapester Straße 38-50, 10787 Berlin',
     details: `- **Bikini Berlin** is een conceptmall vlak naast de Gedächtniskirche. Het dakterras kijkt uit over het apenverblijf van de **Zoologischer Garten**.
 - Pint erbij? In hetzelfde gebouw zit de **Monkey Bar** van het 25hours Hotel (10e verdieping), met hetzelfde zicht op de Zoo en over de stad.

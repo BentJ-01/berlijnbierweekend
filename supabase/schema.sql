@@ -22,13 +22,13 @@ create table golf_holes (
 );
 
 insert into golf_holes (id, position, bar_name, par, rule) values
-  ('702b63b4-351b-4c9d-bbb2-4520c83278e3', 0, '', 3, 'Drink staand'),
-  ('768e523d-46ea-4230-a09c-8ceb1ec0e2f1', 1, '', 3, 'Bestel in het Duits'),
-  ('9e48080e-b5ee-44e0-bdd1-19c950dee121', 2, '', 3, 'Drink met je zwakke hand'),
-  ('150e636c-22ff-4624-ad05-97d0be86839a', 3, '', 3, 'Proost met iedereen in de bar'),
-  ('959f401d-70f8-44c9-8356-544752de852b', 4, '', 3, 'Geen woord Nederlands tot je glas leeg is'),
-  ('61af575d-2e94-434c-9bf0-2d90715853a3', 5, '', 3, 'Laatste die klaar is, krijgt +1'),
-  ('d5f04112-a58e-483a-98f1-7371cd577bea', 6, '', 3, 'Elke slok begint met een toast');
+  ('702b63b4-351b-4c9d-bbb2-4520c83278e3', 1, '', 3, 'Laatste met een leeg glas: +1'),
+  ('768e523d-46ea-4230-a09c-8ceb1ec0e2f1', 2, '', 3, 'Geen woord Nederlands tot uw glas leeg is. Elke keer dat iemand toch Nederlands praat: +1'),
+  ('9e48080e-b5ee-44e0-bdd1-19c950dee121', 3, '', 3, 'Stille hole: niemand praat tot het glas leeg is. Elke keer dat iemand iets zegt: +1'),
+  ('150e636c-22ff-4624-ad05-97d0be86839a', 4, '', 3, 'Quiz over de Reichstag: fout antwoord = je valt af. Eerste afvaller +2, tweede en derde afvaller +1, de rest niets'),
+  ('959f401d-70f8-44c9-8356-544752de852b', 5, '', 3, 'Thumb-king: de leider van het scorebord is Thumb-king. Legt die stiekem de duim op tafel, dan krijgt wie het laatst volgt +1. Geldt tot aan het volgende café'),
+  ('61af575d-2e94-434c-9bf0-2d90715853a3', 6, '', 3, ''),
+  ('d5f04112-a58e-483a-98f1-7371cd577bea', 7, '', 3, '');
 
 create table golf_scores (
   id uuid primary key default gen_random_uuid(),
