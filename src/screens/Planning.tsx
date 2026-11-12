@@ -184,7 +184,7 @@ function EventSheet({ item, myName, onClose }: { item: PlanItem; myName: string;
         {item.details &&
           (item.secretUntil && new Date() < new Date(item.secretUntil) ? (
             <p className="rounded-2xl border border-dashed border-zinc-700 p-4 text-zinc-400">
-              Het parcours blijft geheim tot zaterdag 13:00. Niet spieken.
+              Vanaf zaterdag 13:00. 🤫
             </p>
           ) : (
             <RichText text={item.details} />

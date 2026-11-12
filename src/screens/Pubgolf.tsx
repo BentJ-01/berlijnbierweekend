@@ -46,7 +46,6 @@ export function Pubgolf(props: Props) {
         until={PUBGOLF_OPEN}
         now={now}
         title="Pubgolf start zaterdag om 13:00"
-        text="Het parcours en de opdrachten blijven geheim tot dan."
       />
     )
   }
