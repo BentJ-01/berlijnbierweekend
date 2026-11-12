@@ -12,7 +12,7 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Berlijn',
+        name: 'BerlijnBierApp',
         short_name: 'Berlijn',
         description: 'Pinten, pubgolf en planning voor ons weekend in Berlijn',
         lang: 'nl-BE',
