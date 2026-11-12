@@ -14,6 +14,8 @@ export type PlanItem = {
   url?: string
   optional?: boolean
   details?: string
+  /** Details pas tonen vanaf dit moment (ISO-tijd). */
+  secretUntil?: string
 }
 
 /** Ticket bij een planningsitem. player = naam, of null voor een groepsticket. */
@@ -192,7 +194,8 @@ Na de tour zit ge vlak bij het **Mauerpark** en de **Bernauer Straße** (Berlijn
     day: '2026-11-14',
     part: 'Namiddag',
     title: 'Culturele pubgolf',
-    note: 'Van de Muur tot Unter den Linden, met telkens een café ertussen. Scores in de Pubgolf-tab.',
+    note: 'Cultuurstops en cafés met opdrachten. Alles staat vanaf 13:00 in de Pubgolf-tab.',
+    secretUntil: '2026-11-14T13:00:00+01:00',
     details: `## Parcours
 - Hole 1: Späti van Harmonie of café in de buurt
 - The Berlin Wall and its Fall (Schwedter Straße)

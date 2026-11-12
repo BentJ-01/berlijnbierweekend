@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Navigation, Pencil } from 'lucide-react'
 import { Field, Modal, inputClass } from '../components/Modal'
+import { Countdown } from '../components/Countdown'
+import { PUBGOLF_OPEN, useNow } from '../lib/unlock'
 import { PARCOURS, type CafeStop, type QuizVraag } from '../data/parcours'
 import { mapsRouteUrl, withBerlin } from '../lib/maps'
 import { randomRule } from '../lib/rules'
@@ -36,7 +38,22 @@ async function ensureHole(cafe: Cafe, holes: TableApi<Hole>) {
   return true
 }
 
-export function Pubgolf({ players, me, holes, scores, toast }: Props) {
+export function Pubgolf(props: Props) {
+  const now = useNow(PUBGOLF_OPEN)
+  if (now < PUBGOLF_OPEN) {
+    return (
+      <Countdown
+        until={PUBGOLF_OPEN}
+        now={now}
+        title="Pubgolf start zaterdag om 13:00"
+        text="Het parcours en de opdrachten blijven geheim tot dan."
+      />
+    )
+  }
+  return <PubgolfInhoud {...props} />
+}
+
+function PubgolfInhoud({ players, me, holes, scores, toast }: Props) {
   const cafes: Cafe[] = useMemo(() => {
     const byId = new Map(holes.rows.map((h) => [h.id, h]))
     return CAFES.map((c, i) => {
