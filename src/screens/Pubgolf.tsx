@@ -45,7 +45,7 @@ export function Pubgolf(props: Props) {
       <Countdown
         until={PUBGOLF_OPEN}
         now={now}
-        title="Pubgolf start zaterdag om 13:00"
+        title="Culturele BierPubgolf start zaterdag om 13:00"
       />
     )
   }
