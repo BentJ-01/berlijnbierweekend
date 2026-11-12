@@ -63,7 +63,7 @@ export const PARCOURS: Stop[] = [
   {
     kind: 'cafe',
     id: '9e48080e-b5ee-44e0-bdd1-19c950dee121',
-    hint: 'Café in de buurt van de Bernauer Straße. Daarna S-Bahn van Nordbahnhof naar Brandenburger Tor (S1, S2 of S25, 2 haltes). Om 17:15 aan de Reichstag!',
+    hint: 'Café in de buurt van de Bernauer Straße. Daarna S-Bahn van Nordbahnhof naar Brandenburger Tor (S1, S2 of S25, 2 haltes).',
     defaultRule: 'Stille hole: niemand praat tot het glas leeg is. Elke keer dat iemand iets zegt: +1',
   },
   {
@@ -75,9 +75,9 @@ export const PARCOURS: Stop[] = [
   },
   {
     kind: 'cultuur',
-    name: 'Reichstag: koepel (17:30)',
+    name: 'Reichstag: koepel',
     location: 'Reichstagsgebäude, Platz der Republik 1, 11011 Berlin',
-    description: 'Gereserveerd om 17:30. Om 17:15 aan de bezoekersingang (Platz der Republik), Bent toont de bevestiging, iedereen ID mee. Geen flessen meenemen!',
+    description: 'Geen reservatie: we gaan langs en zien of er plek is (vraag het aan het bezoekerscentrum ernaast). Iedereen ID mee, geen flessen meenemen. Geen plek? Door naar de volgende hole.',
   },
   {
     kind: 'cafe',
