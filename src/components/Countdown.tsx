@@ -1,8 +1,8 @@
 import { Lock } from 'lucide-react'
 
-type Props = { until: Date; now: Date; title: string; text: string }
+type Props = { until: Date; now: Date; title: string }
 
-export function Countdown({ until, now, title, text }: Props) {
+export function Countdown({ until, now, title }: Props) {
   const left = Math.max(0, until.getTime() - now.getTime())
   const parts = [
     { label: 'dagen', value: Math.floor(left / 86_400_000) },
@@ -17,7 +17,6 @@ export function Countdown({ until, now, title, text }: Props) {
         <Lock size={30} />
       </div>
       <h1 className="text-2xl font-black">{title}</h1>
-      <p className="mt-2 text-zinc-400">{text}</p>
       <div className="mt-8 grid w-full max-w-xs grid-cols-4 gap-2">
         {parts.map((p) => (
           <div key={p.label} className="rounded-2xl border border-line bg-card py-3">
@@ -26,7 +25,7 @@ export function Countdown({ until, now, title, text }: Props) {
           </div>
         ))}
       </div>
-      <p className="mt-8 text-sm text-zinc-500">Niet spieken. 🤫</p>
+      <p className="mt-8 text-2xl">🤫</p>
     </div>
   )
 }
