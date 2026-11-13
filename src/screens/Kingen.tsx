@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react'
 import { Field, Modal, inputClass } from '../components/Modal'
 import { isComplete, roundPoints, roundsFor, type RoundDef, type RoundInput } from '../data/kingen'
@@ -72,7 +72,9 @@ export function Kingen({ players, me, games, rounds, toast }: Props) {
                   </div>
                   <div className="mt-1 text-sm text-zinc-500">
                     {summary.done}/{summary.defs.length} rondes
-                    {summary.done > 0 && leader && ` · 👑 ${leader.player.name} (${fmt(leader.total)})`}
+                    {summary.done === summary.defs.length
+                      ? ` · gedaan, ${joinNames(losersOf(summary.ranking))} moet adden 🍺`
+                      : summary.done > 0 && leader && ` · 👑 ${leader.player.name} (${fmt(leader.total)})`}
                   </div>
                 </div>
                 <ChevronRight className="shrink-0 text-zinc-600" size={22} />
@@ -98,6 +100,16 @@ export function Kingen({ players, me, games, rounds, toast }: Props) {
     </div>
   )
 }
+
+/** Wie het laagst staat (bij gelijke stand: allemaal). */
+function losersOf(ranking: { player: Player; total: number }[]) {
+  if (!ranking.length) return []
+  const min = Math.min(...ranking.map((r) => r.total))
+  return ranking.filter((r) => r.total === min).map((r) => r.player.name)
+}
+
+const joinNames = (names: string[]) =>
+  names.length > 1 ? `${names.slice(0, -1).join(', ')} en ${names[names.length - 1]}` : names[0] ?? ''
 
 function gameSummary(game: KingenGame, players: Player[], allRounds: KingenRound[]) {
   const ps = players.filter((p) => game.players.includes(p.id))
@@ -129,6 +141,16 @@ type GameProps = {
 function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps) {
   const [editing, setEditing] = useState<RoundDef | null>(null)
   const { ps, ids, defs, byKey, ranking, done } = useMemo(() => gameSummary(game, players, rounds.rows), [game, players, rounds.rows])
+  const finished = done === defs.length
+  const losers = losersOf(ranking)
+
+  // Melding tonen op het moment dat de laatste ronde ingevuld wordt (niet bij het openen van een afgelopen spel)
+  const [showLoser, setShowLoser] = useState(false)
+  const wasFinished = useRef(finished)
+  useEffect(() => {
+    if (finished && !wasFinished.current) setShowLoser(true)
+    wasFinished.current = finished
+  }, [finished])
 
   async function deleteGame() {
     if (!confirm(`"${game.name}" en alle scores verwijderen?`)) return
@@ -193,6 +215,18 @@ function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps
       </div>
       <h1 className="mb-3 text-2xl font-black">{game.name}</h1>
 
+      {finished && (
+        <button
+          onClick={() => setShowLoser(true)}
+          className="mb-4 w-full rounded-2xl border border-amber-400/50 bg-amber-400/10 p-4 text-left"
+        >
+          <div className="text-sm font-semibold uppercase tracking-wide text-amber-300">Spel gedaan</div>
+          <div className="text-lg font-bold">
+            {joinNames(losers)} {losers.length > 1 ? 'moeten' : 'moet'} een halve liter adden 🍺
+          </div>
+        </button>
+      )}
+
       <section className="mb-6 rounded-2xl border border-line bg-card p-4">
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
           Stand · {done}/{defs.length} rondes
@@ -213,6 +247,23 @@ function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps
 
       {section('Min-spellen', defs.filter((d) => !d.troefBy))}
       {section('Troef', defs.filter((d) => d.troefBy))}
+
+      {showLoser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-6" onClick={() => setShowLoser(false)}>
+          <div className="w-full max-w-sm rounded-3xl border border-amber-400/50 bg-card p-6 text-center">
+            <div className="text-6xl">🍺</div>
+            <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">Spel gedaan · laatste plaats</p>
+            <h2 className="mt-1 text-3xl font-black">{joinNames(losers)}</h2>
+            <p className="mt-2 text-lg text-zinc-300">
+              {losers.length > 1 ? 'moeten' : 'moet'} een <b className="text-amber-300">halve liter adden</b>!
+            </p>
+            <p className="mt-4 text-sm text-zinc-500">👑 Winnaar: {ranking[0]?.player.name}</p>
+            <button className="mt-6 min-h-14 w-full rounded-2xl bg-amber-400 text-lg font-bold text-bg active:bg-amber-300" onClick={() => setShowLoser(false)}>
+              Proost
+            </button>
+          </div>
+        </div>
+      )}
 
       {editing && (
         <RoundForm
