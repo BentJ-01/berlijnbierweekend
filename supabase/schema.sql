@@ -48,11 +48,28 @@ create table expenses (
   created_at timestamptz not null default now()
 );
 
+-- Kingen: spellen met gekozen spelers, en per ronde de ingave (punten worden in de app berekend)
+create table kingen_games (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  players uuid[] not null,
+  created_at timestamptz not null default now()
+);
+
+create table kingen_rounds (
+  id uuid primary key default gen_random_uuid(),
+  game_id uuid not null references kingen_games(id) on delete cascade,
+  round_key text not null,
+  input jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  unique (game_id, round_key)
+);
+
 -- Open toegang (privé weekendapp) en realtime aan
 do $$
 declare t text;
 begin
-  foreach t in array array['players','golf_holes','golf_scores','expenses'] loop
+  foreach t in array array['players','golf_holes','golf_scores','expenses','kingen_games','kingen_rounds'] loop
     execute format('alter table %I enable row level security', t);
     execute format('create policy "open_all" on %I for all using (true) with check (true)', t);
     execute format('alter publication supabase_realtime add table %I', t);

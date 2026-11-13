@@ -1,7 +1,7 @@
 # Berlijn
 
 Kleine mobiele PWA voor ons vriendenweekend in Berlijn (13–16 november 2026).
-Alle info op één plek: planning met tickets, pubgolf en gedeelde kosten.
+Alle info op één plek: planning met tickets, pubgolf, Kingen-scores en gedeelde kosten.
 
 Spelers: Benjamin, Bent, Senne, Aaron, Lander.
 
@@ -54,8 +54,9 @@ src/
   data/
     planning.ts           planning, eventinfo en tickets (hardcoded)
     parcours.ts           pubgolf-parcours: cultuurstops en cafés
+    kingen.ts             rondes en puntentelling van Kingen
   components/             onderbalk, toast, modal, QR-code, iOS-banner
-  screens/                Planning, Pubgolf, Kosten
+  screens/                Planning, Pubgolf, Kingen, Kosten
   lib/
     useRealtimeTable.ts   tabel laden + live houden via Realtime
     money.ts              bedragen, verdelen en afrekenen
@@ -69,6 +70,8 @@ supabase/schema.sql       schema + seed
   Tickets worden als QR-code getoond, enkel aan wie ze toebehoren (groepstickets aan iedereen).
 - **Pubgolf**: het parcours staat in `src/data/parcours.ts`. Naam, par en opdracht van elk café
   staan in `golf_holes` (aanpasbaar in de app), scores in `golf_scores`.
+- **Kingen**: spellen in `kingen_games` (met de gekozen spelers), per ronde de ingave in `kingen_rounds`.
+  6 min-spellen + één troefronde per speler; de punten worden in de app berekend (`src/data/kingen.ts`).
 - **Kosten**: uitgaven in `expenses`, gelijk verdeeld over wie meedeed. Saldo en "wie betaalt wie"
   worden in de app berekend.
 - **PWA**: de service worker cachet enkel de app shell. Data komt altijd live van Supabase.

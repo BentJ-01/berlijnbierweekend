@@ -6,8 +6,9 @@ import { WhoAreYou } from './components/WhoAreYou'
 import { readString, writeString } from './lib/storage'
 import { mapsRouteUrl } from './lib/maps'
 import { isConfigured } from './lib/supabase'
-import type { Expense, Hole, Player, Score } from './lib/types'
+import type { Expense, Hole, KingenGame, KingenRound, Player, Score } from './lib/types'
 import { useRealtimeTable } from './lib/useRealtimeTable'
+import { Kingen } from './screens/Kingen'
 import { Kosten } from './screens/Kosten'
 import { Planning } from './screens/Planning'
 import { Pubgolf } from './screens/Pubgolf'
@@ -16,6 +17,7 @@ const PLAYER_KEY = 'currentPlayerId'
 const SLAAPPLEK = 'Stresemannstraße 66, 10963 Berlin, Deutschland'
 const SLAAPPLEK_ROUTE = mapsRouteUrl(SLAAPPLEK)
 const scoreKeyOf = (s: Score) => `${s.hole_id}:${s.player_id}`
+const kingenRoundKey = (r: KingenRound) => `${r.game_id}:${r.round_key}`
 
 export default function App() {
   if (!isConfigured) {
@@ -40,6 +42,8 @@ function Main() {
   const holes = useRealtimeTable<Hole>('golf_holes')
   const scores = useRealtimeTable<Score>('golf_scores', scoreKeyOf)
   const expenses = useRealtimeTable<Expense>('expenses')
+  const kingenGames = useRealtimeTable<KingenGame>('kingen_games')
+  const kingenRounds = useRealtimeTable<KingenRound>('kingen_rounds', kingenRoundKey)
 
   const players = [...playersTable.rows].sort((a, b) => a.sort_order - b.sort_order)
   const current = players.find((p) => p.id === me)
@@ -101,6 +105,9 @@ function Main() {
         <Planning players={players} me={current.id} />
       )}
       {tab === 'pubgolf' && <Pubgolf players={players} me={current.id} holes={holes} scores={scores} toast={toast.show} />}
+      {tab === 'kingen' && (
+        <Kingen players={players} me={current.id} games={kingenGames} rounds={kingenRounds} toast={toast.show} />
+      )}
       {tab === 'kosten' && <Kosten players={players} me={current.id} expenses={expenses} toast={toast.show} />}
 
       {toast.node}

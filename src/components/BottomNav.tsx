@@ -1,11 +1,12 @@
-import { CalendarDays, Flag, Wallet, type LucideIcon } from 'lucide-react'
+import { CalendarDays, Flag, Spade, Wallet, type LucideIcon } from 'lucide-react'
 
-export type Tab = 'planning' | 'pubgolf' | 'kosten'
+export type Tab = 'planning' | 'pubgolf' | 'kingen' | 'kosten'
 
 
 const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'planning', label: 'Planning', icon: CalendarDays },
   { id: 'pubgolf', label: 'Pubgolf', icon: Flag },
+  { id: 'kingen', label: 'Kingen', icon: Spade },
   { id: 'kosten', label: 'Kosten', icon: Wallet },
 ]
 

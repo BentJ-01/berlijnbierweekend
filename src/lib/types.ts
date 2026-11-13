@@ -22,3 +22,13 @@ export type TableApi<T> = {
   upsertLocal: (row: T) => void
   removeLocal: (id: string) => void
 }
+
+export type KingenGame = { id: string; name: string; players: string[]; created_at: string }
+
+export type KingenRound = {
+  id: string
+  game_id: string
+  round_key: string
+  input: import('../data/kingen').RoundInput
+  created_at: string
+}
