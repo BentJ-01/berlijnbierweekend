@@ -19,15 +19,21 @@ export type RoundDef = {
   /** Totaal aantal slagen/kaarten met 4 spelers, om te controleren. */
   total4?: number
   troefBy?: string
+  /** Korte uitleg van de ronde (info-knopje). */
+  explain: string
 }
 
+/** Basisregels die voor elke ronde gelden. */
+export const BASIS_UITLEG =
+  'Iedereen krijgt evenveel kaarten. Wie uitkomt legt een kaart, de rest moet die kleur volgen als het kan. Kan je niet volgen, dan leg je een andere kaart. De hoogste kaart van de gevraagde kleur wint de slag (of de hoogste troef in een troefronde). Wie de slag wint, komt de volgende keer uit.'
+
 export const MIN_ROUNDS: RoundDef[] = [
-  { key: 'slagen', name: 'Geen slagen', rule: '−1 per slag', kind: 'count', perUnit: -1, unit: 'slagen', total4: 13 },
-  { key: 'harten', name: 'Geen harten', rule: '−1 per harten', kind: 'count', perUnit: -1, unit: 'harten', total4: 13 },
-  { key: 'herenboeren', name: 'Geen heren en boeren', rule: '−1 per heer of boer', kind: 'count', perUnit: -1, unit: 'heren/boeren', total4: 8 },
-  { key: 'dames', name: 'Geen dames', rule: '−2 per dame', kind: 'count', perUnit: -2, unit: 'dames', total4: 4 },
-  { key: 'hartenheer', name: 'Geen hartenheer', rule: '−5 voor wie de hartenheer pakt', kind: 'heartKing' },
-  { key: 'zevenlaatste', name: 'Geen 7de en laatste slag', rule: '7de slag −2, laatste slag −3', kind: 'seventhLast' },
+  { key: 'slagen', name: 'Geen slagen', rule: '−1 per slag', kind: 'count', perUnit: -1, unit: 'slagen', total4: 13, explain: 'Haal zo weinig mogelijk slagen binnen. Elke slag die je wint, kost 1 punt. Er is geen troef.' },
+  { key: 'harten', name: 'Geen harten', rule: '−1 per harten', kind: 'count', perUnit: -1, unit: 'harten', total4: 13, explain: 'Elke harten-kaart in de slagen die je wint, kost 1 punt. Probeer harten dus bij anderen te dumpen als je een kleur niet kan volgen. Geen troef.' },
+  { key: 'herenboeren', name: 'Geen heren en boeren', rule: '−1 per heer of boer', kind: 'count', perUnit: -1, unit: 'heren/boeren', total4: 8, explain: 'Elke heer en elke boer in de slagen die je wint, kost 1 punt (8 in totaal). Geen troef.' },
+  { key: 'dames', name: 'Geen dames', rule: '−2 per dame', kind: 'count', perUnit: -2, unit: 'dames', total4: 4, explain: 'Elke dame in de slagen die je wint, kost 2 punten (4 dames, dus −8 in totaal). Geen troef.' },
+  { key: 'hartenheer', name: 'Geen hartenheer', rule: '−5 voor wie de hartenheer pakt', kind: 'heartKing', explain: 'Wie de slag wint waar de hartenheer in zit, krijgt −5. Meestal stop je de ronde zodra de hartenheer gevallen is. Geen troef.' },
+  { key: 'zevenlaatste', name: 'Geen 7de en laatste slag', rule: '7de slag −2, laatste slag −3', kind: 'seventhLast', explain: 'Enkel twee slagen tellen: wie de 7de slag wint, krijgt −2, wie de laatste slag wint, krijgt −3. De andere slagen maken niet uit. Geen troef.' },
 ]
 
 export function troefRound(playerId: string, name: string): RoundDef {
@@ -40,6 +46,7 @@ export function troefRound(playerId: string, name: string): RoundDef {
     unit: 'slagen',
     total4: 13,
     troefBy: playerId,
+    explain: `${name} kiest de troefkleur. Kan je de gevraagde kleur niet volgen, dan mag je troeven: de hoogste troef wint de slag. Nu wil je zoveel mogelijk slagen: elke slag is +1.`,
   }
 }
 

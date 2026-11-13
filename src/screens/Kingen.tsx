@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Info, Plus, Trash2 } from 'lucide-react'
 import { Field, Modal, inputClass } from '../components/Modal'
-import { isComplete, roundPoints, roundsFor, type RoundDef, type RoundInput } from '../data/kingen'
+import { BASIS_UITLEG, isComplete, roundPoints, roundsFor, type RoundDef, type RoundInput } from '../data/kingen'
 import { supabase } from '../lib/supabase'
 import type { KingenGame, KingenRound, Player, ShowToast, TableApi } from '../lib/types'
 
@@ -140,6 +140,7 @@ type GameProps = {
 
 function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps) {
   const [editing, setEditing] = useState<RoundDef | null>(null)
+  const [info, setInfo] = useState<RoundDef | null>(null)
   const { ps, ids, defs, byKey, ranking, done } = useMemo(() => gameSummary(game, players, rounds.rows), [game, players, rounds.rows])
   const finished = done === defs.length
   const losers = losersOf(ranking)
@@ -169,13 +170,20 @@ function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps
           const complete = isComplete(def, r?.input)
           const pts = complete && r ? roundPoints(def, r.input, ids) : null
           return (
-            <li key={def.key}>
+            <li key={def.key} className="relative">
+              <button
+                onClick={() => setInfo(def)}
+                aria-label={`Uitleg ${def.name}`}
+                className="absolute right-11 top-2.5 z-10 flex h-9 w-9 items-center justify-center rounded-full text-zinc-400 active:bg-line"
+              >
+                <Info size={18} />
+              </button>
               <button
                 onClick={() => setEditing(def)}
                 className={`w-full rounded-2xl border p-4 text-left active:bg-line ${complete ? 'border-line bg-bg' : 'border-line bg-card'}`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="flex-1 font-bold">{def.name}</span>
+                  <span className="flex-1 pr-10 font-bold">{def.name}</span>
                   {complete ? (
                     <Check size={20} className="text-emerald-400" />
                   ) : (
@@ -265,6 +273,15 @@ function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps
         </div>
       )}
 
+      {info && (
+        <Modal title={info.name} onClose={() => setInfo(null)}>
+          <p className="-mt-2 mb-3 font-semibold text-amber-300">{info.rule}</p>
+          <p className="mb-4 leading-relaxed text-zinc-300">{info.explain}</p>
+          <h3 className="mb-1 text-sm font-bold uppercase tracking-wide text-zinc-500">Basisregels</h3>
+          <p className="text-sm leading-relaxed text-zinc-400">{BASIS_UITLEG}</p>
+        </Modal>
+      )}
+
       {editing && (
         <RoundForm
           def={editing}
@@ -343,7 +360,13 @@ function RoundForm({ def, game, ps, existing, rounds, toast, onClose }: RoundPro
 
   return (
     <Modal title={def.name} onClose={onClose}>
-      <p className="-mt-2 mb-4 text-sm text-zinc-400">{def.rule}</p>
+      <p className="-mt-2 mb-1 text-sm text-zinc-400">{def.rule}</p>
+      <details className="mb-4 text-sm">
+        <summary className="flex min-h-9 cursor-pointer list-none items-center gap-1.5 font-semibold text-amber-300">
+          <Info size={15} /> Uitleg
+        </summary>
+        <p className="mt-1 leading-relaxed text-zinc-300">{def.explain}</p>
+      </details>
 
       {def.kind === 'count' && (
         <>
