@@ -49,6 +49,10 @@ export function Kingen({ players, me, games, rounds, toast }: Props) {
         </button>
       </div>
 
+      {sorted.length > 0 && <Klassement players={players} me={me} games={games.rows} rounds={rounds.rows} />}
+
+      {sorted.length > 0 && <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Spellen</h2>}
+
       {sorted.length === 0 && (
         <p className="rounded-2xl border border-dashed border-zinc-700 p-6 text-center text-zinc-500">
           Nog geen spellen. Start er een met "Nieuw spel".
@@ -110,6 +114,66 @@ function losersOf(ranking: { player: Player; total: number }[]) {
 
 const joinNames = (names: string[]) =>
   names.length > 1 ? `${names.slice(0, -1).join(', ')} en ${names[names.length - 1]}` : names[0] ?? ''
+
+type Stand = { player: Player; points: number; played: number; finished: number; wins: number; losses: number }
+
+/** Klassement over alle spellen: punten uit alle ingevulde rondes, wins en losses uit afgelopen spellen. */
+function Klassement({ players, me, games, rounds }: { players: Player[]; me: string; games: KingenGame[]; rounds: KingenRound[] }) {
+  const rows = useMemo(() => {
+    const stand = new Map<string, Stand>(players.map((p) => [p.id, { player: p, points: 0, played: 0, finished: 0, wins: 0, losses: 0 }]))
+    for (const g of games) {
+      const { ranking, done, defs } = gameSummary(g, players, rounds)
+      const finished = done === defs.length
+      const top = Math.max(...ranking.map((r) => r.total))
+      const bottom = Math.min(...ranking.map((r) => r.total))
+      for (const { player, total } of ranking) {
+        const st = stand.get(player.id)
+        if (!st) continue
+        st.played++
+        st.points += total
+        if (!finished) continue
+        st.finished++
+        if (total === top) st.wins++
+        if (total === bottom) st.losses++
+      }
+    }
+    return [...stand.values()].sort(
+      (a, b) => Number(!a.played) - Number(!b.played) || b.points - a.points || b.wins - a.wins || a.losses - b.losses,
+    )
+  }, [players, games, rounds])
+
+  return (
+    <section className="mb-6 rounded-2xl border border-line bg-card p-4">
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Klassement · alle spellen</h2>
+      <div className="grid grid-cols-[1.25rem_1fr_2.5rem_2.5rem_2.5rem_3.5rem] items-center gap-x-2 text-xs font-semibold uppercase text-zinc-500">
+        <span />
+        <span />
+        <span className="text-center">Sp</span>
+        <span className="text-center text-emerald-400">W</span>
+        <span className="text-center text-red-400">L</span>
+        <span className="text-right">Ptn</span>
+      </div>
+      {rows.map((r, i) => (
+        <div key={r.player.id} className="grid grid-cols-[1.25rem_1fr_2.5rem_2.5rem_2.5rem_3.5rem] items-center gap-x-2 py-1.5">
+          <span className="text-zinc-500">{i + 1}</span>
+          <span className={`truncate text-lg font-semibold ${r.player.id === me ? 'text-amber-300' : ''}`}>
+            {i === 0 && r.played > 0 && '👑 '}
+            {r.player.name}
+          </span>
+          <span className="text-center tabular-nums text-zinc-400">{r.played || '–'}</span>
+          <span className="text-center font-bold tabular-nums">{r.played ? r.wins : '–'}</span>
+          <span className="text-center font-bold tabular-nums">{r.played ? r.losses : '–'}</span>
+          <span className={`text-right text-xl font-black tabular-nums ${r.points > 0 ? 'text-emerald-400' : r.points < 0 ? 'text-red-400' : ''}`}>
+            {r.played ? fmt(r.points) : <span className="text-zinc-600">–</span>}
+          </span>
+        </div>
+      ))}
+      <p className="mt-2 text-xs text-zinc-500">
+        Sp = gespeeld · W = gewonnen · L = verloren (laatste = adden 🍺). Wins en losses tellen pas als een spel gedaan is.
+      </p>
+    </section>
+  )
+}
 
 function gameSummary(game: KingenGame, players: Player[], allRounds: KingenRound[]) {
   const ps = players.filter((p) => game.players.includes(p.id))
