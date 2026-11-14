@@ -175,6 +175,8 @@ function Klassement({ players, me, games, rounds }: { players: Player[]; me: str
   )
 }
 
+const STRAF_KEY = 'straf'
+
 function gameSummary(game: KingenGame, players: Player[], allRounds: KingenRound[]) {
   const ps = players.filter((p) => game.players.includes(p.id))
   const ids = ps.map((p) => p.id)
@@ -188,8 +190,11 @@ function gameSummary(game: KingenGame, players: Player[], allRounds: KingenRound
     done++
     for (const [id, p] of roundPoints(def, r.input, ids)) totals.set(id, (totals.get(id) ?? 0) + p)
   }
+  // Strafpunten: elk strafpunt is −1 (opgeslagen als ronde 'straf')
+  const straf = byKey.get(STRAF_KEY)?.input.counts ?? {}
+  for (const id of ids) totals.set(id, (totals.get(id) ?? 0) - (straf[id] ?? 0))
   const ranking = ps.map((p) => ({ player: p, total: totals.get(p.id) ?? 0 })).sort((a, b) => b.total - a.total)
-  return { ps, ids, defs, byKey, ranking, done }
+  return { ps, ids, defs, byKey, ranking, done, straf }
 }
 
 type GameProps = {
@@ -205,7 +210,7 @@ type GameProps = {
 function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps) {
   const [editing, setEditing] = useState<RoundDef | null>(null)
   const [info, setInfo] = useState<RoundDef | null>(null)
-  const { ps, ids, defs, byKey, ranking, done } = useMemo(() => gameSummary(game, players, rounds.rows), [game, players, rounds.rows])
+  const { ps, ids, defs, byKey, ranking, done, straf } = useMemo(() => gameSummary(game, players, rounds.rows), [game, players, rounds.rows])
   const finished = done === defs.length
   const losers = losersOf(ranking)
 
@@ -216,6 +221,27 @@ function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps
     if (finished && !wasFinished.current) setShowLoser(true)
     wasFinished.current = finished
   }, [finished])
+
+  async function addStraf(playerId: string, delta: number) {
+    const next = Math.max(0, (straf[playerId] ?? 0) + delta)
+    const input = { counts: { ...straf, [playerId]: next } }
+    const existing = byKey.get(STRAF_KEY)
+    if (delta > 0 && 'vibrate' in navigator) navigator.vibrate(30)
+    rounds.upsertLocal({
+      id: existing?.id ?? `tmp-${game.id}`,
+      game_id: game.id,
+      round_key: STRAF_KEY,
+      input,
+      created_at: existing?.created_at ?? new Date().toISOString(),
+    })
+    const { error } = await supabase
+      .from('kingen_rounds')
+      .upsert({ game_id: game.id, round_key: STRAF_KEY, input }, { onConflict: 'game_id,round_key' })
+    if (error) {
+      toast('Niet gelukt, probeer opnieuw')
+      void rounds.reload()
+    }
+  }
 
   async function deleteGame() {
     if (!confirm(`"${game.name}" en alle scores verwijderen?`)) return
@@ -298,6 +324,33 @@ function GameView({ game, players, me, rounds, games, toast, onBack }: GameProps
           </div>
         </button>
       )}
+
+      <section className="mb-4 rounded-2xl border border-red-400/30 bg-red-400/5 p-4">
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Strafpunten · elk strafpunt −1</h2>
+        {ps.map((p) => {
+          const n = straf[p.id] ?? 0
+          return (
+            <div key={p.id} className="flex items-center gap-2 py-1">
+              <span className={`flex-1 text-lg font-semibold ${p.id === me ? 'text-amber-300' : ''}`}>{p.name}</span>
+              <button
+                className="h-11 w-11 rounded-xl text-xl text-zinc-500 active:bg-line disabled:opacity-30"
+                disabled={n === 0}
+                onClick={() => void addStraf(p.id, -1)}
+                aria-label={`Strafpunt weg bij ${p.name}`}
+              >
+                −
+              </button>
+              <span className={`w-8 text-center text-2xl font-black tabular-nums ${n ? 'text-red-400' : 'text-zinc-600'}`}>{n}</span>
+              <button
+                className="h-12 min-w-16 rounded-xl bg-red-500 px-3 font-bold text-white active:bg-red-400"
+                onClick={() => void addStraf(p.id, 1)}
+              >
+                +1
+              </button>
+            </div>
+          )
+        })}
+      </section>
 
       <section className="mb-6 rounded-2xl border border-line bg-card p-4">
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
