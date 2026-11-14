@@ -11,7 +11,12 @@ import { InstallPrompt } from './components/InstallPrompt.tsx'
 registerSW({
   immediate: true,
   onRegisteredSW(_url, reg) {
-    if (reg) setInterval(() => void reg.update(), 60 * 60 * 1000)
+    if (!reg) return
+    setInterval(() => void reg.update(), 60 * 60 * 1000)
+    // Ook checken telkens de app terug naar voren komt (geïnstalleerde app uit de achtergrond)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') void reg.update()
+    })
   },
 })
 
