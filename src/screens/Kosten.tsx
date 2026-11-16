@@ -32,6 +32,10 @@ export function Kosten({ players, me, expenses, toast }: Props) {
 
   const sorted = useMemo(() => [...expenses.rows].sort((a, b) => b.created_at.localeCompare(a.created_at)), [expenses.rows])
   const myBalance = balances.get(me) ?? 0
+  const myDebts = transfers
+    .filter((t) => t.from === me)
+    .map((t) => ({ to: players.find((p) => p.id === t.to), cents: t.cents }))
+    .filter((d): d is { to: Player; cents: number } => Boolean(d.to?.iban))
 
   async function markPaid(from: string, to: string, cents: number) {
     const question =
@@ -57,6 +61,19 @@ export function Kosten({ players, me, expenses, toast }: Props) {
           {formatEuro(Math.abs(myBalance))}
         </p>
         <p className="mt-2 text-sm text-zinc-500">Samen uitgegeven: {formatEuro(total)}</p>
+        {myDebts.length > 0 && (
+          <div className="mt-4 flex flex-col gap-2">
+            {myDebts.map(({ to, cents }) => (
+              <button
+                key={to.id}
+                onClick={() => setPaying({ to, cents })}
+                className="min-h-14 w-full rounded-2xl bg-amber-400 text-lg font-bold text-bg active:bg-amber-300"
+              >
+                Betaal {formatEuro(cents)} aan {to.name}
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mb-4 rounded-2xl border border-line bg-card p-4">
@@ -79,8 +96,6 @@ export function Kosten({ players, me, expenses, toast }: Props) {
         <section className="mb-6 rounded-2xl border border-line bg-card p-4">
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Wie betaalt wie</h2>
           {transfers.map((t) => {
-            const to = players.find((p) => p.id === t.to)
-            const canPay = t.from === me && to?.iban
             return (
               <div key={`${t.from}-${t.to}`} className="flex items-center gap-2 py-1.5">
                 <span className="flex-1">
@@ -89,14 +104,6 @@ export function Kosten({ players, me, expenses, toast }: Props) {
                   <b className={t.to === me ? 'text-amber-300' : ''}>{name(t.to)}</b>
                 </span>
                 <span className="font-bold tabular-nums">{formatEuro(t.cents)}</span>
-                {canPay && (
-                  <button
-                    onClick={() => setPaying({ to: to!, cents: t.cents })}
-                    className="min-h-10 rounded-lg bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
-                  >
-                    Betaal
-                  </button>
-                )}
                 <button
                   onClick={() => markPaid(t.from, t.to, t.cents)}
                   className="min-h-10 rounded-lg border border-line px-2 text-sm text-zinc-300 active:bg-line"
