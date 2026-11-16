@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Copy } from 'lucide-react'
+import { Copy, QrCode as QrCodeIcon } from 'lucide-react'
 import { QrCode } from '../components/QrCode'
 import { MEDEDELING, epcPayload, formatIban } from '../lib/epc'
 import { Field, Modal, inputClass } from '../components/Modal'
@@ -188,6 +188,7 @@ type PayProps = { to: Player; cents: number; toast: ShowToast; onClose: () => vo
 function PayModal({ to, cents, toast, onClose, onPaid }: PayProps) {
   const iban = to.iban ?? ''
   const amount = (cents / 100).toFixed(2).replace('.', ',')
+  const [showQr, setShowQr] = useState(false)
 
   async function copy(text: string, what: string) {
     try {
@@ -199,34 +200,37 @@ function PayModal({ to, cents, toast, onClose, onPaid }: PayProps) {
   }
 
   const row = (label: string, value: string, copyValue: string) => (
-    <div className="flex items-center gap-2 rounded-xl bg-bg p-3">
-      <div className="min-w-0 flex-1">
-        <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{label}</div>
-        <div className="truncate font-mono text-lg">{value}</div>
-      </div>
-      <button
-        onClick={() => void copy(copyValue, label)}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-line text-zinc-200 active:bg-zinc-600"
-        aria-label={`${label} kopiëren`}
-      >
-        <Copy size={18} />
-      </button>
-    </div>
+    <button
+      onClick={() => void copy(copyValue, label)}
+      className="flex w-full items-center gap-2 rounded-xl bg-bg p-3 text-left active:bg-line"
+    >
+      <span className="min-w-0 flex-1">
+        <span className="block text-xs font-semibold uppercase tracking-wide text-zinc-500">{label}</span>
+        <span className="block truncate font-mono text-lg">{value}</span>
+      </span>
+      <Copy size={18} className="shrink-0 text-zinc-400" />
+    </button>
   )
 
   return (
     <Modal title={`Betaal ${formatEuro(cents)} aan ${to.name}`} onClose={onClose}>
-      <div className="mb-3 flex justify-center rounded-2xl bg-white p-3">
-        <QrCode value={epcPayload(to.name, iban, cents)} size={220} />
-      </div>
-      <p className="mb-4 text-sm text-zinc-400">
-        Scan deze QR met je bank-app (KBC, Belfius, ING, BNP, Argenta, ...): rekeningnummer, bedrag en mededeling staan dan ingevuld. Op je eigen gsm? Kopieer de gegevens hieronder en plak ze in een nieuwe overschrijving.
-      </p>
-      <div className="mb-5 flex flex-col gap-2">
+      <p className="-mt-2 mb-3 text-sm text-zinc-400">Tik om te kopiëren en plak in je bank-app.</p>
+      <div className="mb-4 flex flex-col gap-2">
         {row('Rekeningnummer', formatIban(iban), iban)}
         {row('Bedrag', `€ ${amount}`, amount)}
         {row('Mededeling', MEDEDELING, MEDEDELING)}
       </div>
+
+      {showQr ? (
+        <div className="mb-4 flex justify-center rounded-2xl bg-white p-3">
+          <QrCode value={epcPayload(to.name, iban, cents)} size={220} />
+        </div>
+      ) : (
+        <button onClick={() => setShowQr(true)} className="mb-4 flex min-h-11 items-center gap-1.5 text-sm font-semibold text-amber-300">
+          <QrCodeIcon size={16} /> Toon QR om te scannen
+        </button>
+      )}
+
       <button
         className="min-h-14 w-full rounded-xl bg-amber-400 text-lg font-bold text-bg active:bg-amber-300"
         onClick={onPaid}
