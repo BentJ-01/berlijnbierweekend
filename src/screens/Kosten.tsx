@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Copy, QrCode as QrCodeIcon } from 'lucide-react'
-import { QrCode } from '../components/QrCode'
-import { MEDEDELING, epcPayload, formatIban } from '../lib/epc'
+import { Copy } from 'lucide-react'
+import { MEDEDELING, formatIban } from '../lib/overschrijving'
 import { Field, Modal, inputClass } from '../components/Modal'
 import { formatEuro, parseEuro, settle, splitCents } from '../lib/money'
 import { supabase } from '../lib/supabase'
@@ -188,7 +187,6 @@ type PayProps = { to: Player; cents: number; toast: ShowToast; onClose: () => vo
 function PayModal({ to, cents, toast, onClose, onPaid }: PayProps) {
   const iban = to.iban ?? ''
   const amount = (cents / 100).toFixed(2).replace('.', ',')
-  const [showQr, setShowQr] = useState(false)
 
   async function copy(text: string, what: string) {
     try {
@@ -215,21 +213,11 @@ function PayModal({ to, cents, toast, onClose, onPaid }: PayProps) {
   return (
     <Modal title={`Betaal ${formatEuro(cents)} aan ${to.name}`} onClose={onClose}>
       <p className="-mt-2 mb-3 text-sm text-zinc-400">Tik om te kopiëren en plak in je bank-app.</p>
-      <div className="mb-4 flex flex-col gap-2">
+      <div className="mb-5 flex flex-col gap-2">
         {row('Rekeningnummer', formatIban(iban), iban)}
         {row('Bedrag', `€ ${amount}`, amount)}
         {row('Mededeling', MEDEDELING, MEDEDELING)}
       </div>
-
-      {showQr ? (
-        <div className="mb-4 flex justify-center rounded-2xl bg-white p-3">
-          <QrCode value={epcPayload(to.name, iban, cents)} size={220} />
-        </div>
-      ) : (
-        <button onClick={() => setShowQr(true)} className="mb-4 flex min-h-11 items-center gap-1.5 text-sm font-semibold text-amber-300">
-          <QrCodeIcon size={16} /> Toon QR om te scannen
-        </button>
-      )}
 
       <button
         className="min-h-14 w-full rounded-xl bg-amber-400 text-lg font-bold text-bg active:bg-amber-300"
