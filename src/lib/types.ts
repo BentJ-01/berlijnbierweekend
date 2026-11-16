@@ -1,4 +1,4 @@
-export type Player = { id: string; name: string; sort_order: number }
+export type Player = { id: string; name: string; sort_order: number; iban?: string | null }
 
 /** Een café-hole van de pubgolf: de id's staan vast in src/data/parcours.ts. */
 export type Hole = { id: string; position: number; bar_name: string; par: number; rule: string; created_at: string }

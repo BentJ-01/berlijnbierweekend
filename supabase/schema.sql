@@ -5,7 +5,8 @@
 create table players (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
-  sort_order int not null default 0
+  sort_order int not null default 0,
+  iban text -- rekeningnummer voor de Betaal-knop (enkel in de database, niet in de repo)
 );
 
 insert into players (name, sort_order) values

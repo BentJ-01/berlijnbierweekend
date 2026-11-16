@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import { Copy } from 'lucide-react'
+import { QrCode } from '../components/QrCode'
+import { MEDEDELING, epcPayload, formatIban } from '../lib/epc'
 import { Field, Modal, inputClass } from '../components/Modal'
 import { formatEuro, parseEuro, settle, splitCents } from '../lib/money'
 import { supabase } from '../lib/supabase'
@@ -13,6 +16,7 @@ type Props = {
 
 export function Kosten({ players, me, expenses, toast }: Props) {
   const [editing, setEditing] = useState<Expense | 'new' | null>(null)
+  const [paying, setPaying] = useState<{ to: Player; cents: number } | null>(null)
   const name = (id: string) => players.find((p) => p.id === id)?.name ?? '?'
 
   const { balances, total, transfers } = useMemo(() => {
@@ -74,22 +78,34 @@ export function Kosten({ players, me, expenses, toast }: Props) {
       {transfers.length > 0 && (
         <section className="mb-6 rounded-2xl border border-line bg-card p-4">
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Wie betaalt wie</h2>
-          {transfers.map((t) => (
-            <div key={`${t.from}-${t.to}`} className="flex items-center gap-2 py-1.5">
-              <span className="flex-1">
-                <b className={t.from === me ? 'text-amber-300' : ''}>{name(t.from)}</b>
-                <span className="text-zinc-500"> → </span>
-                <b className={t.to === me ? 'text-amber-300' : ''}>{name(t.to)}</b>
-              </span>
-              <span className="font-bold tabular-nums">{formatEuro(t.cents)}</span>
-              <button
-                onClick={() => markPaid(t.from, t.to, t.cents)}
-                className="min-h-10 rounded-lg border border-line px-2 text-sm text-zinc-300 active:bg-line"
-              >
-                Betaald ✓
-              </button>
-            </div>
-          ))}
+          {transfers.map((t) => {
+            const to = players.find((p) => p.id === t.to)
+            const canPay = t.from === me && to?.iban
+            return (
+              <div key={`${t.from}-${t.to}`} className="flex items-center gap-2 py-1.5">
+                <span className="flex-1">
+                  <b className={t.from === me ? 'text-amber-300' : ''}>{name(t.from)}</b>
+                  <span className="text-zinc-500"> → </span>
+                  <b className={t.to === me ? 'text-amber-300' : ''}>{name(t.to)}</b>
+                </span>
+                <span className="font-bold tabular-nums">{formatEuro(t.cents)}</span>
+                {canPay && (
+                  <button
+                    onClick={() => setPaying({ to: to!, cents: t.cents })}
+                    className="min-h-10 rounded-lg bg-amber-400 px-3 text-sm font-bold text-bg active:bg-amber-300"
+                  >
+                    Betaal
+                  </button>
+                )}
+                <button
+                  onClick={() => markPaid(t.from, t.to, t.cents)}
+                  className="min-h-10 rounded-lg border border-line px-2 text-sm text-zinc-300 active:bg-line"
+                >
+                  Betaald ✓
+                </button>
+              </div>
+            )
+          })}
         </section>
       )}
 
@@ -132,6 +148,20 @@ export function Kosten({ players, me, expenses, toast }: Props) {
         +
       </button>
 
+      {paying && (
+        <PayModal
+          to={paying.to}
+          cents={paying.cents}
+          toast={toast}
+          onClose={() => setPaying(null)}
+          onPaid={() => {
+            const p = paying
+            setPaying(null)
+            void markPaid(me, p.to.id, p.cents)
+          }}
+        />
+      )}
+
       {editing && (
         <ExpenseForm
           expense={editing === 'new' ? null : editing}
@@ -143,6 +173,60 @@ export function Kosten({ players, me, expenses, toast }: Props) {
         />
       )}
     </div>
+  )
+}
+
+type PayProps = { to: Player; cents: number; toast: ShowToast; onClose: () => void; onPaid: () => void }
+
+function PayModal({ to, cents, toast, onClose, onPaid }: PayProps) {
+  const iban = to.iban ?? ''
+  const amount = (cents / 100).toFixed(2).replace('.', ',')
+
+  async function copy(text: string, what: string) {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast(`${what} gekopieerd`)
+    } catch {
+      toast('Kopiëren lukte niet, typ het over')
+    }
+  }
+
+  const row = (label: string, value: string, copyValue: string) => (
+    <div className="flex items-center gap-2 rounded-xl bg-bg p-3">
+      <div className="min-w-0 flex-1">
+        <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{label}</div>
+        <div className="truncate font-mono text-lg">{value}</div>
+      </div>
+      <button
+        onClick={() => void copy(copyValue, label)}
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-line text-zinc-200 active:bg-zinc-600"
+        aria-label={`${label} kopiëren`}
+      >
+        <Copy size={18} />
+      </button>
+    </div>
+  )
+
+  return (
+    <Modal title={`Betaal ${formatEuro(cents)} aan ${to.name}`} onClose={onClose}>
+      <div className="mb-3 flex justify-center rounded-2xl bg-white p-3">
+        <QrCode value={epcPayload(to.name, iban, cents)} size={220} />
+      </div>
+      <p className="mb-4 text-sm text-zinc-400">
+        Scan deze QR met je bank-app (KBC, Belfius, ING, BNP, Argenta, ...): rekeningnummer, bedrag en mededeling staan dan ingevuld. Op je eigen gsm? Kopieer de gegevens hieronder en plak ze in een nieuwe overschrijving.
+      </p>
+      <div className="mb-5 flex flex-col gap-2">
+        {row('Rekeningnummer', formatIban(iban), iban)}
+        {row('Bedrag', `€ ${amount}`, amount)}
+        {row('Mededeling', MEDEDELING, MEDEDELING)}
+      </div>
+      <button
+        className="min-h-14 w-full rounded-xl bg-amber-400 text-lg font-bold text-bg active:bg-amber-300"
+        onClick={onPaid}
+      >
+        Ik heb betaald ✓
+      </button>
+    </Modal>
   )
 }
 
