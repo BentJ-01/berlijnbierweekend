@@ -45,3 +45,28 @@ export function settle(balances: Map<string, number>): Transfer[] {
   }
   return out
 }
+
+/** Verdeelt een bedrag volgens delen (bv. 2:1:1); de restcenten gaan naar de grootste resten. */
+export function splitByShares(amount: number, shares: Record<string, number>, people: string[]): Map<string, number> {
+  const ids = people.filter((p) => (shares[p] ?? 0) > 0)
+  const total = ids.reduce((s, p) => s + shares[p], 0)
+  const out = new Map<string, number>()
+  if (!total) return out
+  const exact = ids.map((p) => ({ p, v: (amount * shares[p]) / total }))
+  let rest = amount
+  for (const { p, v } of exact) {
+    out.set(p, Math.floor(v))
+    rest -= Math.floor(v)
+  }
+  exact
+    .map((e, i) => ({ ...e, frac: e.v - Math.floor(e.v), i }))
+    .sort((a, b) => b.frac - a.frac || a.i - b.i)
+    .slice(0, rest)
+    .forEach(({ p }) => out.set(p, (out.get(p) ?? 0) + 1))
+  return out
+}
+
+/** Verdeling van een uitgave: in delen als die er zijn, anders gelijk. */
+export function splitExpense(amount: number, people: string[], shares?: Record<string, number> | null) {
+  return shares ? splitByShares(amount, shares, people) : splitCents(amount, people)
+}

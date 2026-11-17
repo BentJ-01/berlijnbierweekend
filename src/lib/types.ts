@@ -11,6 +11,8 @@ export type Expense = {
   amount_cents: number
   paid_by: string
   split_between: string[]
+  /** Delen per speler (bv. {bent: 2, senne: 1}); null = gelijk verdeeld. */
+  shares?: Record<string, number> | null
   created_at: string
 }
 
