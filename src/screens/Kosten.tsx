@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Copy } from 'lucide-react'
 import { MEDEDELING, formatIban } from '../lib/overschrijving'
 import { Field, Modal, inputClass } from '../components/Modal'
-import { formatEuro, parseEuro, settle, splitCents } from '../lib/money'
+import { formatEuro, parseEuro, settle, splitExpense } from '../lib/money'
 import { supabase } from '../lib/supabase'
 import type { Expense, Player, ShowToast, TableApi } from '../lib/types'
 
@@ -24,7 +24,7 @@ export function Kosten({ players, me, expenses, toast }: Props) {
     for (const e of expenses.rows) {
       if (!isRefund(e)) sum += e.amount_cents
       bal.set(e.paid_by, (bal.get(e.paid_by) ?? 0) + e.amount_cents)
-      for (const [pid, share] of splitCents(e.amount_cents, e.split_between)) bal.set(pid, (bal.get(pid) ?? 0) - share)
+      for (const [pid, share] of splitExpense(e.amount_cents, e.split_between, e.shares)) bal.set(pid, (bal.get(pid) ?? 0) - share)
     }
     return { balances: bal, total: sum, transfers: settle(bal) }
   }, [players, expenses.rows])
@@ -136,7 +136,13 @@ export function Kosten({ players, me, expenses, toast }: Props) {
                   <span className="block text-sm text-zinc-400">
                     {refund
                       ? 'Terugbetaling'
-                      : `${name(e.paid_by)} betaalde · ${everyone ? 'iedereen' : e.split_between.map(name).join(', ')}`}
+                      : `${name(e.paid_by)} betaalde · ${
+                          e.shares
+                            ? e.split_between.map((id) => `${name(id)} ${e.shares?.[id]}×`).join(', ')
+                            : everyone
+                              ? 'iedereen'
+                              : e.split_between.map(name).join(', ')
+                        }`}
                   </span>
                 </span>
                 <span className="text-lg font-black tabular-nums">{formatEuro(e.amount_cents)}</span>
@@ -246,10 +252,20 @@ function ExpenseForm({ expense, players, me, expenses, toast, onClose }: FormPro
   const [amount, setAmount] = useState(expense ? (expense.amount_cents / 100).toFixed(2).replace('.', ',') : '')
   const [paidBy, setPaidBy] = useState(expense?.paid_by ?? me)
   const [split, setSplit] = useState<string[]>(expense?.split_between ?? players.map((p) => p.id))
+  const [byShares, setByShares] = useState(Boolean(expense?.shares))
+  const [shares, setShares] = useState<Record<string, number>>(
+    () => expense?.shares ?? Object.fromEntries(players.map((p) => [p.id, 1])),
+  )
   const [busy, setBusy] = useState(false)
 
   const cents = parseEuro(amount)
-  const perPerson = cents && split.length ? splitCents(cents, split).values().next().value : null
+  const sharePeople = players.map((p) => p.id).filter((id) => (shares[id] ?? 0) > 0)
+  const preview = cents ? splitExpense(cents, byShares ? sharePeople : split, byShares ? shares : null) : null
+
+  function setShare(id: string, n: number) {
+    if (n < 0) return
+    setShares((s) => ({ ...s, [id]: n }))
+  }
 
   function toggle(id: string) {
     setSplit((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
@@ -258,10 +274,16 @@ function ExpenseForm({ expense, players, me, expenses, toast, onClose }: FormPro
   async function save() {
     if (!title.trim()) return toast('Waarvoor was het?')
     if (!cents) return toast('Geef een geldig bedrag in')
-    if (!split.length) return toast('Kies voor wie het was')
+    const people = byShares ? sharePeople : players.map((p) => p.id).filter((id) => split.includes(id))
+    if (!people.length) return toast('Kies voor wie het was')
     setBusy(true)
-    const ordered = players.map((p) => p.id).filter((id) => split.includes(id))
-    const values = { title: title.trim(), amount_cents: cents, paid_by: paidBy, split_between: ordered }
+    const values = {
+      title: title.trim(),
+      amount_cents: cents,
+      paid_by: paidBy,
+      split_between: people,
+      shares: byShares ? Object.fromEntries(people.map((id) => [id, shares[id]])) : null,
+    }
     const { data, error } = expense
       ? await supabase.from('expenses').update(values).eq('id', expense.id).select().single()
       : await supabase.from('expenses').insert(values).select().single()
@@ -309,26 +331,67 @@ function ExpenseForm({ expense, players, me, expenses, toast, onClose }: FormPro
         </div>
       </div>
       <div className="mb-5">
-        <div className="mb-1 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-zinc-400">Voor wie</span>
-          <button
-            className="text-sm font-semibold text-amber-300"
-            onClick={() => setSplit(split.length === players.length ? [] : players.map((p) => p.id))}
-          >
-            {split.length === players.length ? 'Niemand' : 'Iedereen'}
-          </button>
+          <div className="grid grid-cols-2 rounded-xl bg-bg p-1 text-sm font-semibold">
+            {[false, true].map((v) => (
+              <button
+                key={String(v)}
+                onClick={() => setByShares(v)}
+                className={`min-h-9 rounded-lg px-3 ${byShares === v ? 'bg-amber-400 text-bg' : 'text-zinc-400'}`}
+              >
+                {v ? 'In delen' : 'Gelijk'}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {players.map((p) => (
-            <button key={p.id} className={chip(split.includes(p.id))} onClick={() => toggle(p.id)}>
-              {p.name}
-            </button>
-          ))}
-        </div>
-        {perPerson != null && (
-          <p className="mt-2 text-sm text-zinc-500">
-            ±{formatEuro(perPerson)} per persoon ({split.length})
-          </p>
+
+        {byShares ? (
+          <>
+            {players.map((p) => {
+              const n = shares[p.id] ?? 0
+              const part = preview?.get(p.id)
+              return (
+                <div key={p.id} className="flex items-center gap-2 py-1">
+                  <span className="min-w-0 flex-1">
+                    <span className={`block font-semibold ${n ? '' : 'text-zinc-500'}`}>{p.name}</span>
+                    <span className="text-sm text-zinc-500">{n && part != null ? formatEuro(part) : 'doet niet mee'}</span>
+                  </span>
+                  <button className="h-12 w-12 rounded-xl bg-line text-xl font-bold disabled:opacity-30" disabled={n === 0} onClick={() => setShare(p.id, n - 1)}>
+                    −
+                  </button>
+                  <span className="w-12 text-center text-2xl font-black tabular-nums">{n}×</span>
+                  <button className="h-12 w-12 rounded-xl bg-amber-400 text-xl font-bold text-bg active:bg-amber-300" onClick={() => setShare(p.id, n + 1)}>
+                    +
+                  </button>
+                </div>
+              )
+            })}
+            <p className="mt-1 text-sm text-zinc-500">Bv. 2× voor wie twee pinten had, 0× voor wie niet meedoet.</p>
+          </>
+        ) : (
+          <>
+            <div className="mb-2 flex justify-end">
+              <button
+                className="text-sm font-semibold text-amber-300"
+                onClick={() => setSplit(split.length === players.length ? [] : players.map((p) => p.id))}
+              >
+                {split.length === players.length ? 'Niemand' : 'Iedereen'}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {players.map((p) => (
+                <button key={p.id} className={chip(split.includes(p.id))} onClick={() => toggle(p.id)}>
+                  {p.name}
+                </button>
+              ))}
+            </div>
+            {preview && split.length > 0 && (
+              <p className="mt-2 text-sm text-zinc-500">
+                ±{formatEuro(preview.values().next().value ?? 0)} per persoon ({split.length})
+              </p>
+            )}
+          </>
         )}
       </div>
       <div className="flex gap-3">

@@ -46,6 +46,7 @@ create table expenses (
   amount_cents int not null check (amount_cents > 0),
   paid_by uuid not null references players(id) on delete cascade,
   split_between uuid[] not null,
+  shares jsonb, -- delen per speler (bv. 2:1); leeg = gelijk verdeeld
   created_at timestamptz not null default now()
 );
 
